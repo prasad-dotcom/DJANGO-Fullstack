@@ -3,7 +3,7 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 
 #creating userManager as it is also a required object in Users(abstactbaseuser)class
 class MyUserManager(BaseUserManager):
-    def create_user(self, email, name, tc, password=None,password2=None):
+    def create_user(self, email, name, tc, role, password=None, password2=None):
         """
         Creates and saves a User with the given email, name, tc and password.
         """
@@ -14,13 +14,14 @@ class MyUserManager(BaseUserManager):
             email=self.normalize_email(email),
             name=name,
             tc=tc,
+            role=role,
         )
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, name, tc, password=None):
+    def create_superuser(self, email, role, name, tc, password=None):
         """
         Creates and saves a superuser with the given email, name, tc and password.
         """
@@ -29,6 +30,7 @@ class MyUserManager(BaseUserManager):
             name=name,
             tc=tc,
             password=password,
+            role=role,
         )
         user.is_admin = True
         user.save(using=self._db)
@@ -44,6 +46,11 @@ class Users(AbstractBaseUser):
         max_length=255,
         unique=True,
     )
+    ROLE_CHOICES = (
+        ('freelancer', 'Freelancer'),
+        ('recruiter', 'Recruiter'),
+    )
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='freelancer')
     name = models.CharField(max_length=255)
     tc = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -54,7 +61,7 @@ class Users(AbstractBaseUser):
     objects = MyUserManager()
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["name", "tc"]
+    REQUIRED_FIELDS = ["name", "tc","role"]
 
     def __str__(self):
         return self.email
