@@ -9,4 +9,5 @@ urlpatterns = [
     path('accounts/register/',views.UserRegistrationView.as_view(),name='registration'),
     path('accounts/login/',views.UserLoginView.as_view(),name='login'),
     path('accounts/profile/',views.ProfileView.as_view(),name='profile'),
+    path('accounts/passwordchange/',views.ChangePasswordView.as_view(),name='change_password'),
 ]
