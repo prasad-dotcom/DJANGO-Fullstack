@@ -1,8 +1,16 @@
 from django.shortcuts import render
-from django.http import HttpResponse;
+
 
 # Create your views here.
 
-def members(request){
-    return HttpResponse("hello world")
-}
+
+def index(request):
+    return render(request, 'Hello/index.html')
+
+def contact(request):
+    return render(request,'Hello/contact.html')
+
+def dynamic(request,id,name):
+    
+    return render(request,'Hello/dynamic_url.html',context={"id" : id, "name" : name})
+

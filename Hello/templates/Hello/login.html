@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      /* Page reset */
+      body, html {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        -webkit-font-smoothing:antialiased;
+      }
+
+      /* Bright animated gradient background */
+      .animated-gradient {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background: linear-gradient(135deg, #fdfbfb 0%, #ebedff 30%, #e6fff7 100%);
+        background-size: 400% 400%;
+        animation: gradientMove 12s ease-in-out infinite;
+        filter: saturate(1.02);
+      }
+      @keyframes gradientMove {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+
+      /* Decorative soft shapes */
+      .bg-shape {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(64px);
+        opacity: 0.35;
+        z-index: 1;
+        pointer-events: none;
+      }
+      .bg-shape1 { width: 420px; height: 420px; background: #bfe8ff; top: 6%; left: 6%; }
+      .bg-shape2 { width: 300px; height: 300px; background: #ffd8b5; bottom: 6%; right: 8%; }
+      .bg-shape3 { width: 220px; height: 220px; background: #f3d2ff; top: 56%; left: 72%; }
+
+      /* Three.js canvas sits above gradient/shapes */
+      #bg-canvas {
+        position: fixed;
+        inset: 0;
+        z-index: 2;
+        pointer-events: none;
+        opacity: 0.95;
+      }
+
+      /* Center container */
+      .center-flex {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 4;
+        padding: 24px;
+      }
+
+      /* Card (register form) */
+      .card-form {
+        width: 460px;
+        max-width: 94vw;
+        border-radius: 18px;
+        padding: 28px;
+        position: relative;
+        transition: box-shadow 0.35s ease, transform 0.25s ease, border 0.25s ease;
+        box-shadow: 0 10px 40px rgba(20,30,60,0.08);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(16,24,40,0.04);
+      }
+
+      .freelancer-theme.card-form {
+        background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,255,255,0.95));
+      }
+      .recruiter-theme.card-form {
+        background: linear-gradient(180deg, rgba(255,250,240,0.98), rgba(255,245,230,0.95));
+      }
+
+      /* Logo and headings */
+      .brand {
+        display:flex;
+        align-items:center;
+        gap:12px;
+        margin-bottom: 8px;
+      }
+      .brand .logo {
+        width:46px; height:46px; border-radius:10px;
+        background: linear-gradient(135deg,#40a8ff,#0bb7d8);
+        box-shadow: 0 6px 18px rgba(64,168,255,0.18);
+      }
+      .brand h1 {
+        font-size: 1.25rem;
+        margin:0;
+        letter-spacing: -0.2px;
+      }
+      .subtitle {
+        font-size: 0.95rem;
+        margin-bottom: 18px;
+        color: rgba(20,30,50,0.7);
+      }
+      .recruiter-theme .subtitle { color: rgba(40,24,10,0.7); }
+
+      /* Inputs */
+      .form-control {
+        height: 48px;
+        border-radius: 10px;
+        border: 1px solid rgba(16,24,40,0.08);
+        box-shadow: none;
+        padding-left: 14px;
+      }
+      .form-control:focus {
+        box-shadow: 0 6px 24px rgba(64,168,255,0.12);
+        outline: none;
+        border-color: rgba(64,168,255,0.45);
+      }
+      .recruiter-theme .form-control:focus {
+        box-shadow: 0 6px 24px rgba(255,193,7,0.10);
+        border-color: rgba(255,193,7,0.45);
+      }
+
+      /* Register button */
+      .btn-register {
+        height:50px;
+        border-radius: 12px;
+        font-weight:600;
+        font-size:1rem;
+      }
+      .btn-register.freelancer {
+        background: linear-gradient(90deg,#0ea5ff,#40a8ff);
+        border: none;
+        color: #fff;
+        box-shadow: 0 8px 28px rgba(64,168,255,0.18);
+      }
+      .btn-register.recruiter {
+        background: linear-gradient(90deg,#ffb347,#ffcf69);
+        border: none;
+        color:#2b2b2b;
+        box-shadow: 0 8px 28px rgba(255,193,7,0.14);
+      }
+
+      /* Progress border overlay and progress bar */
+      .progress-border {
+        position: absolute;
+        inset: -6px;
+        border-radius: 22px;
+        pointer-events: none;
+        z-index: -1;
+      }
+      .progress-border svg { width: 100%; height: 100%; display:block; }
+      .progress-bar-linear {
+        height: 8px;
+        border-radius: 999px;
+        overflow:hidden;
+        background: rgba(16,24,40,0.06);
+        margin-top: 14px;
+      }
+      .progress-bar-linear > .fill {
+        height: 100%;
+        width: 0%;
+        transition: width .35s ease, background .25s ease;
+      }
+
+      /* Quote styling */
+      .quote-bg {
+        position: fixed;
+        top: 8%;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 3;
+        width: 90vw;
+        max-width: 900px;
+        text-align: center;
+        font-size: 1.1rem;
+        font-style: italic;
+        font-weight: 500;
+        opacity: 0.95;
+        pointer-events: none;
+        user-select: none;
+        letter-spacing: 0.3px;
+      }
+      .freelancer-quote { color: #0b78c6; text-shadow: 0 8px 28px rgba(11,119,198,0.08); }
+      .recruiter-quote { color: #b66f00; text-shadow: 0 8px 28px rgba(182,111,0,0.08); }
+
+      /* small helper row */
+      .helper-row { margin-top:12px; display:flex; justify-content: flex-end; align-items:center; gap:12px; }
+      .helper-row .hint { color: rgba(16,24,40,0.55); font-size:0.9rem; }
+      .recruiter-theme .hint { color: rgba(50,30,10,0.6); }
+
+      /* NEW: ring/glow element behind the form */
+      #registerForm::after {
+        content: "";
+        position: absolute;
+        inset: -8px;
+        border-radius: 22px;
+        z-index: -1;
+        pointer-events: none;
+        transition: box-shadow 0.3s ease, opacity 0.3s ease;
+        box-shadow: 0 0 0 rgba(0,0,0,0);
+        opacity: 0;
+      }
+      /* when full */
+      #registerForm.full::after { opacity: 1; }
+
+      @media (max-width:480px) {
+        .brand h1 { font-size:1.05rem; }
+        .subtitle { font-size:0.9rem; }
+      }
+    </style>
+</head>
+<body>
+    <div class="animated-gradient"></div>
+    <div class="bg-shape bg-shape1"></div>
+    <div class="bg-shape bg-shape2"></div>
+    <div class="bg-shape bg-shape3"></div>
+
+    <!-- Three.js canvas for subtle animated elements -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Quote -->
+    <div id="quoteBg" class="quote-bg freelancer-quote">
+      "Unlock your potential. Every freelancer is a creator of their own journey."
+    </div>
+
+    <div class="center-flex">
+      <div id="registerForm" class="card-form freelancer-theme">
+        <div class="brand">
+          <div class="logo" aria-hidden="true"></div>
+          <div>
+            <h1 id="formTitle">Freelancer Registration</h1>
+            <div class="subtitle">Simple sign up to start applying for projects.</div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <input id="nameInput" type="text" class="form-control" placeholder="Full name" name="username" aria-label="Full name">
+        </div>
+        <div class="mb-3">
+          <input id="emailInput" type="email" class="form-control" placeholder="Email address" name="email" aria-label="Email">
+        </div>
+        <div class="mb-2">
+          <input id="passInput" type="password" class="form-control" placeholder="Password" name="password" aria-label="Password">
+        </div>
+
+        <div class="helper-row">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="roleToggle" aria-label="Toggle role">
+            <label class="form-check-label ms-2" for="roleToggle" style="font-size:0.95rem;">Recruiter</label>
+          </div>
+        </div>
+
+        <div class="progress-bar-linear mt-3" aria-hidden="true">
+          <div id="progressFill" class="fill" style="background:#40a8ff;width:0%"></div>
+        </div>
+
+        <div class="mt-4">
+          <button id="registerBtn" class="btn btn-register freelancer w-100">Create account</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Three.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js"></script>
+    <script>
+      /* ---------- Three.js subtle floating particles + lighting (kept light for performance) ---------- */
+      const canvas = document.getElementById('bg-canvas');
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.z = 9;
+
+      // lights
+      let ambient = new THREE.AmbientLight(0xffffff, 0.6);
+      scene.add(ambient);
+      let dir = new THREE.DirectionalLight(0xffffff, 0.5);
+      dir.position.set(5, 10, 7);
+      scene.add(dir);
+
+      const group = new THREE.Group();
+      scene.add(group);
+
+      function addParticle(color, x, y, z, scale) {
+        const geom = new THREE.SphereGeometry(scale, 24, 24);
+        const mat = new THREE.MeshStandardMaterial({ color, metalness: 0.2, roughness: 0.4, emissive: color, emissiveIntensity: 0.03, transparent: true, opacity: 0.95 });
+        const m = new THREE.Mesh(geom, mat);
+        m.position.set(x, y, z);
+        group.add(m);
+        return m;
+      }
+
+      // create fewer, larger soft particles for subtle professional effect
+      const particles = [];
+      const palette = [0x40a8ff, 0xffb347, 0xf3d2ff, 0xbfe8ff];
+      for (let i = 0; i < 7; i++) {
+        particles.push(addParticle(palette[i % palette.length], (Math.random()*14-7), (Math.random()*6-3), (Math.random()*-8-2), 0.7 + Math.random()*0.9));
+      }
+
+      function animateThree() {
+        requestAnimationFrame(animateThree);
+        const t = Date.now() * 0.0008;
+        group.children.forEach((p, i) => {
+          p.position.y += Math.sin(t * (0.6 + i*0.08)) * 0.01;
+          p.position.x += Math.cos(t * (0.4 + i*0.05)) * 0.01;
+          p.rotation.y += 0.002 + i*0.0008;
+        });
+        renderer.render(scene, camera);
+      }
+      animateThree();
+
+      window.addEventListener('resize', () => {
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+      });
+
+      /* ---------- Form logic: dynamic glow around box & role themes ---------- */
+      const formEl = document.getElementById('registerForm');
+      const inputs = [ document.getElementById('nameInput'), document.getElementById('emailInput'), document.getElementById('passInput') ];
+      const progressFill = document.getElementById('progressFill');
+      const registerBtn = document.getElementById('registerBtn');
+      const toggle = document.getElementById('roleToggle');
+      const quoteBg = document.getElementById('quoteBg');
+      const formTitle = document.getElementById('formTitle');
+
+      // helper to convert hex to rgb
+      function hexToRgb(hex) {
+        hex = hex.replace('#','');
+        if (hex.length === 3) hex = hex.split('').map(h => h+h).join('');
+        const bigint = parseInt(hex, 16);
+        return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
+      }
+
+      function updateUI() {
+        const filled = inputs.filter(i => i.value.trim() !== '').length;
+        const percent = Math.round((filled / inputs.length) * 100);
+        // theme color based on role
+        const isRecruiter = toggle.checked;
+        const accent = isRecruiter ? '#ffb347' : '#40a8ff';
+        const [r,g,b] = hexToRgb(accent);
+        // progress bar
+        progressFill.style.width = percent + '%';
+        progressFill.style.background = accent;
+        // glow intensity (0.0 .. 0.7)
+        const glow = Math.min(0.7, 0.12 + (percent/100) * 0.65);
+        // sharpness / spread based on percent
+        const spread = 12 + Math.round((percent/100) * 36);
+        // outer ring (pseudo-element) visible when percent > 5
+        if (percent > 5) {
+          formEl.style.setProperty('--ring-shadow', `0 0 ${spread}px rgba(${r},${g},${b}, ${glow})`);
+          formEl.style.boxShadow = `0 10px ${20 + percent/6}px rgba(${r},${g},${b}, ${glow*0.22}), 0 1.5px 8px rgba(16,24,40,0.06)`;
+          formEl.style.border = `1px solid rgba(${r},${g},${b}, ${Math.min(0.18, glow)})`;
+          formEl.style.setProperty('--after-opacity', '1');
+          // set ::after via inline style for browsers not allowing dynamic pseudo changes: use boxShadow on after by toggling class
+          formEl.style.setProperty('--after-box', `0 0 ${spread}px rgba(${r},${g},${b}, ${glow})`);
+          formEl.style.setProperty('--after-opacity', String(Math.min(1, glow*1.3)));
+        } else {
+          formEl.style.boxShadow = `0 10px 40px rgba(20,30,60,0.08)`;
+          formEl.style.border = `1px solid rgba(16,24,40,0.04)`;
+          formEl.style.setProperty('--after-opacity', '0');
+        }
+        // update pseudo-element via CSS variable by toggling classes (CSS uses these)
+        formEl.classList.toggle('recruiter-theme', isRecruiter);
+        formEl.classList.toggle('freelancer-theme', !isRecruiter);
+        registerBtn.classList.toggle('recruiter', isRecruiter);
+        registerBtn.classList.toggle('freelancer', !isRecruiter);
+        quoteBg.textContent = isRecruiter
+          ? '"Leadership is not a position or a title; it is action and example."'
+          : '"Unlock your potential. Every freelancer is a creator of their own journey."';
+        quoteBg.classList.toggle('recruiter-quote', isRecruiter);
+        quoteBg.classList.toggle('freelancer-quote', !isRecruiter);
+        formTitle.textContent = isRecruiter ? 'Recruiter Registration' : 'Freelancer Registration';
+        // full state
+        if (percent === 100) formEl.classList.add('full'); else formEl.classList.remove('full');
+        // update emissive tint of three.js particles
+        group.children.forEach((p) => {
+          const mat = p.material;
+          mat.emissive.setHex(isRecruiter ? 0xffb347 : 0x40a8ff);
+          mat.emissiveIntensity = isRecruiter ? 0.05 : 0.035;
+        });
+      }
+
+      // apply ::after glow using CSS variables
+      const styleSheet = document.createElement('style');
+      styleSheet.textContent = `
+        #registerForm::after {
+          box-shadow: var(--after-box, 0 0 0 rgba(0,0,0,0));
+          opacity: var(--after-opacity, 0);
+        }
+      `;
+      document.head.appendChild(styleSheet);
+
+      inputs.forEach(i => i.addEventListener('input', updateUI));
+      toggle.addEventListener('change', () => { updateUI(); });
+
+      registerBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const filled = inputs.filter(i => i.value.trim() !== '').length;
+        if (filled === inputs.length) {
+          registerBtn.textContent = 'Registered ✓';
+          registerBtn.disabled = true;
+          setTimeout(() => { registerBtn.textContent = 'Create account'; registerBtn.disabled = false; }, 1600);
+        } else {
+          registerBtn.classList.add('shake');
+          setTimeout(()=> registerBtn.classList.remove('shake'), 500);
+        }
+      });
+
+      // initial UI
+      updateUI();
+    </script>
+
+    <!-- Bootstrap JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

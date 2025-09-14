@@ -5,13 +5,19 @@ from Hello.models import Freelancer_data
 from recruiter.models import Recruiters_data 
 #importing serializers
 from . serializers import FreelancersSerializer
-from . serializers import RecruitersSerializer  
+from . serializers import RecruitersSerializer 
+from . serializers import UserRegistrationSerializer 
+from . serializers import UserLoginSerializer
+from .serializers import ProfileSerializer
 from rest_framework.response import Response #used for json format response for API
 from rest_framework import status #to return status.status=HttpErrors
 from rest_framework.decorators import api_view #for function-based serializers
 from rest_framework.views import APIView  # for class-based function serializers
 from django.http import Http404
-
+from django.contrib.auth import authenticate
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import AuthenticationFailed
+from rest_framework.permissions import IsAuthenticated
 
 # Create your views here.
 
@@ -73,4 +79,49 @@ class recruiter_details(APIView):
         Recruiter = self.get_object(id)
         serializer = RecruitersSerializer(Recruiter)
         return Response(serializer.data,status=status.HTTP_200_OK)
-        
+    
+#generating token manually 
+def get_tokens_for_user(user):
+    if not user.is_active:
+      raise AuthenticationFailed("User is not active")
+
+    refresh = RefreshToken.for_user(user)
+
+    return {
+        'refresh': str(refresh),
+        'access': str(refresh.access_token),
+    }
+
+
+class UserRegistrationView(APIView):
+    def post(self,request,format=None):
+        serializer = UserRegistrationSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            user = serializer.save()
+            token = get_tokens_for_user(user)
+            return Response({"token": token, "message": "Registration successful"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserLoginView(APIView):
+    def post(self, request, format=None):
+        serializer = UserLoginSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            email = serializer.validated_data.get('email')
+            password = serializer.validated_data.get('password')
+            user = authenticate(email=email, password=password)
+            if user is not None:
+                token = get_tokens_for_user(user)
+                return Response({"token": token, "message": "Login successful"}, status=status.HTTP_200_OK)
+            else:
+                return Response({"error": {"detail": "Invalid email or password"}}, status=status.HTTP_401_UNAUTHORIZED)
+            
+
+
+class ProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        user = request.user
+        serializer = ProfileSerializer(instance=user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
