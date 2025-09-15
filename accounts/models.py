@@ -3,7 +3,7 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 
 #creating userManager as it is also a required object in Users(abstactbaseuser)class
 class MyUserManager(BaseUserManager):
-    def create_user(self, email, name, tc, role, password=None, password2=None):
+    def create_user(self, email, name, tc, role=None, password=None, password2=None):
         """
         Creates and saves a User with the given email, name, tc and password.
         """
@@ -50,7 +50,7 @@ class Users(AbstractBaseUser):
         ('freelancer', 'Freelancer'),
         ('recruiter', 'Recruiter'),
     )
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='freelancer')
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
     name = models.CharField(max_length=255)
     tc = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)

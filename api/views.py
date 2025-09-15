@@ -83,6 +83,18 @@ class recruiter_details(APIView):
         serializer = RecruitersSerializer(Recruiter)
         return Response(serializer.data,status=status.HTTP_200_OK)
     
+    def put(self,request,id):
+        Recruiter = self.get_object(id)
+        serializer = RecruitersSerializer(Recruiter,data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    def delete(self,request,id):
+        Recruiter = self.get_object(id)
+        Recruiter.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
 #generating token manually 
 def get_tokens_for_user(user):
     if not user.is_active:

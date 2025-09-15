@@ -46,15 +46,6 @@
       .bg-shape2 { width: 300px; height: 300px; background: #ffd8b5; bottom: 6%; right: 8%; }
       .bg-shape3 { width: 220px; height: 220px; background: #f3d2ff; top: 56%; left: 72%; }
 
-      /* Three.js canvas sits above gradient/shapes */
-      #bg-canvas {
-        position: fixed;
-        inset: 0;
-        z-index: 2;
-        pointer-events: none;
-        opacity: 0.95;
-      }
-
       /* Center container */
       .center-flex {
         min-height: 100vh;
@@ -223,9 +214,6 @@
     <div class="bg-shape bg-shape2"></div>
     <div class="bg-shape bg-shape3"></div>
 
-    <!-- Three.js canvas for subtle animated elements -->
-    <canvas id="bg-canvas"></canvas>
-
     <!-- Quote -->
     <div id="quoteBg" class="quote-bg freelancer-quote">
       "Unlock your potential. Every freelancer is a creator of their own journey."
@@ -269,62 +257,7 @@
       </div>
     </div>
 
-    <!-- Three.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js"></script>
     <script>
-      /* ---------- Three.js subtle floating particles + lighting (kept light for performance) ---------- */
-      const canvas = document.getElementById('bg-canvas');
-      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.z = 9;
-
-      // lights
-      let ambient = new THREE.AmbientLight(0xffffff, 0.6);
-      scene.add(ambient);
-      let dir = new THREE.DirectionalLight(0xffffff, 0.5);
-      dir.position.set(5, 10, 7);
-      scene.add(dir);
-
-      const group = new THREE.Group();
-      scene.add(group);
-
-      function addParticle(color, x, y, z, scale) {
-        const geom = new THREE.SphereGeometry(scale, 24, 24);
-        const mat = new THREE.MeshStandardMaterial({ color, metalness: 0.2, roughness: 0.4, emissive: color, emissiveIntensity: 0.03, transparent: true, opacity: 0.95 });
-        const m = new THREE.Mesh(geom, mat);
-        m.position.set(x, y, z);
-        group.add(m);
-        return m;
-      }
-
-      // create fewer, larger soft particles for subtle professional effect
-      const particles = [];
-      const palette = [0x40a8ff, 0xffb347, 0xf3d2ff, 0xbfe8ff];
-      for (let i = 0; i < 7; i++) {
-        particles.push(addParticle(palette[i % palette.length], (Math.random()*14-7), (Math.random()*6-3), (Math.random()*-8-2), 0.7 + Math.random()*0.9));
-      }
-
-      function animateThree() {
-        requestAnimationFrame(animateThree);
-        const t = Date.now() * 0.0008;
-        group.children.forEach((p, i) => {
-          p.position.y += Math.sin(t * (0.6 + i*0.08)) * 0.01;
-          p.position.x += Math.cos(t * (0.4 + i*0.05)) * 0.01;
-          p.rotation.y += 0.002 + i*0.0008;
-        });
-        renderer.render(scene, camera);
-      }
-      animateThree();
-
-      window.addEventListener('resize', () => {
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-      });
-
       /* ---------- Form logic: dynamic glow around box & role themes ---------- */
       const formEl = document.getElementById('registerForm');
       const inputs = [ document.getElementById('nameInput'), document.getElementById('emailInput'), document.getElementById('passInput') ];
@@ -383,12 +316,6 @@
         formTitle.textContent = isRecruiter ? 'Recruiter Registration' : 'Freelancer Registration';
         // full state
         if (percent === 100) formEl.classList.add('full'); else formEl.classList.remove('full');
-        // update emissive tint of three.js particles
-        group.children.forEach((p) => {
-          const mat = p.material;
-          mat.emissive.setHex(isRecruiter ? 0xffb347 : 0x40a8ff);
-          mat.emissiveIntensity = isRecruiter ? 0.05 : 0.035;
-        });
       }
 
       // apply ::after glow using CSS variables

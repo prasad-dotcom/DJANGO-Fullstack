@@ -1,4 +1,6 @@
+
 from django.shortcuts import render
+
 
 
 # Create your views here.
@@ -12,5 +14,12 @@ def contact(request):
 
 def dynamic(request,id,name):
     
-    return render(request,'Hello/dynamic_url.html',context={"id" : id, "name" : name})
+    return render(request,'Hello/dynamic_url.html')
+
+def RegistrationPage(request):
+    
+    return render(request,'Hello/register.html')
+
+def login(request):
+    return render(request,'Hello/login.html')
 
