@@ -1,0 +1,23 @@
+/* Navbar lighting theme */
+.custom-navbar {
+  background: linear-gradient(90deg, #e6fff7 0%, #ebedff 100%);
+  box-shadow: 0 4px 24px rgba(64,168,255,0.10);
+  border-bottom: 1.5px solid #40a8ff;
+}
+.custom-navbar .navbar-brand .logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg,#40a8ff,#0bb7d8);
+  box-shadow: 0 4px 12px rgba(64,168,255,0.18);
+  display: inline-block;
+}
+.custom-navbar .nav-link {
+  font-weight: 500;
+  color: #0ea5ff !important;
+  margin-left: 12px;
+  transition: color 0.2s;
+}
+.custom-navbar .nav-link:hover {
+  color: #0056b3 !important;
+}

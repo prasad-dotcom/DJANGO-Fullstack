@@ -10,9 +10,10 @@
     <link rel="stylesheet" href="{% static 'css/register.css' %}">
 </head>
 <body>
+
     <div class="center-flex">
-      <form method="post" id="registerForm" autocomplete="off" class="card-form freelancer-theme">
-        {% csrf_token %}
+      <form id="registerForm" autocomplete="off" class="card-form freelancer-theme">
+      
         <div class="brand">
           <div class="logo" aria-hidden="true"></div>
           <div>
@@ -27,11 +28,11 @@
         <div class="mb-3">
           <input id="emailInput" type="email" class="form-control" placeholder="Email address" name="email" aria-label="Email" required autocomplete="off">
         </div>
-        <div class="mb-2">
-          <input id="passInput" type="password" class="form-control" placeholder="Password" name="password" aria-label="Password" required autocomplete="off">
+        <div class="mb-3">
+          <input id="passInput" type="password" class="form-control" placeholder="Password" name="password" aria-label="Password" required autocomplete="new-password">
         </div>
-        <div class="mb-2">
-          <input id="passConfirmInput" type="password" class="form-control" placeholder="Confirm Password" name="password2" aria-label="Confirm Password" required autocomplete="off">
+        <div class="mb-3">
+          <input id="passConfirmInput" type="password" class="form-control" placeholder="Confirm Password" name="password2" aria-label="Confirm Password" required autocomplete="new-password">
         </div>
 
         <div class="mb-2">
@@ -60,6 +61,7 @@
             Already signed in?
             <a href="{% url 'login_page' %}">Login</a>
         </div>
+        <div id="result" style="margin-top:10px;text-align:center;"></div>
       </form>
     </div>
     <script src="{% static 'js/register.js' %}"></script>

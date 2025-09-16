@@ -1,10 +1,12 @@
 from django.urls import path
 from . import views
+from Hello import views
+
 
 urlpatterns =[
     
     path('contact-us/', views.contact, name='contact'),
-    path('register/', views.RegistrationPage, name='register_page'),
-    path('login/',views.login,name='login_page'),
+    path('Home/',views.Home, name='home'),
+
     path('<int:id>/<name>/', views.dynamic,name='dynamic'),
 ]
