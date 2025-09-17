@@ -1,4 +1,24 @@
+function clearFormAndMessages() {
+    document.getElementById('nameInput').value = '';
+    document.getElementById('emailInput').value = '';
+    document.getElementById('passInput').value = '';
+    document.getElementById('passConfirmInput').value = '';
+    document.getElementById('tc').checked = false;
+    let resultDiv = document.getElementById('result');
+    if (resultDiv) resultDiv.innerHTML = '';
+}
+
+// Always clear on normal load
+document.addEventListener('DOMContentLoaded', clearFormAndMessages);
+
+// Always clear on bfcache restore (back/forward navigation)
+window.addEventListener('pageshow', function(event) {
+    clearFormAndMessages();
+});
+
 document.addEventListener('DOMContentLoaded', function() {
+    clearFormAndMessages(); // Always clear on load
+
     const formEl = document.getElementById('registerForm');
     const inputs = [
         document.getElementById('nameInput'),

@@ -3,6 +3,7 @@ from accounts.models import Users
 
 
 
+
 # Create your views here.
 
 def RegistrationPage(request):
@@ -10,4 +11,10 @@ def RegistrationPage(request):
 
 def LoginPage(request):
     return render(request,'accounts/login.html')
+
+def ProfilePage(request):
+    return render(request,'accounts/profile.html')
+
+def ChangePasswordPage(request):
+    return render(request,'accounts/change_password.html')
 

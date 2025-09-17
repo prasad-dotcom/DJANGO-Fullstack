@@ -19,3 +19,6 @@ def dynamic(request,id,name):
     
     return render(request,'Hello/dynamic_url.html')
 
+def about(request):
+    return render(request,'Hello/about.html')
+
