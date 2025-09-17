@@ -1,7 +1,7 @@
 #importing models from app
 from Hello.models import Freelancer_data 
 from recruiter.models import Recruiters_data 
-from accounts.models import Users
+from accounts.models import Users, LoginAttempt
 #importing serializers
 from . serializers import FreelancersSerializer
 from . serializers import RecruitersSerializer 
@@ -125,7 +125,17 @@ class UserLoginView(APIView):
             email = serializer.validated_data.get('email')
             password = serializer.validated_data.get('password')
             user = authenticate(email=email, password=password)
-            if user is not None:
+            login_success = user is not None
+
+            # Save login attempt
+            LoginAttempt.objects.create(
+                email=email,
+                success=login_success,
+                ip_address=request.META.get('REMOTE_ADDR'),
+                user_agent=request.META.get('HTTP_USER_AGENT')
+            )
+
+            if login_success:
                 token = get_tokens_for_user(user)
                 return Response({"token": token, "message": "Login successful"}, status=status.HTTP_200_OK)
             else:

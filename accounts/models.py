@@ -81,3 +81,14 @@ class Users(AbstractBaseUser):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
+    
+    
+class LoginAttempt(models.Model):
+    email = models.EmailField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    success = models.BooleanField(default=False)  # <-- likely 'success', not 'successful'
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    user_agent = models.TextField(null=True, blank=True)
+    
+    def __str__(self):
+        return f"LoginAttempt(email={self.email}, success={self.success}, timestamp={self.timestamp})"

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from accounts.models import Users
+from accounts.models import LoginAttempt, Users
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 # Register your models here.
@@ -30,6 +30,12 @@ class UserModelAdmin(BaseUserAdmin):
     search_fields = ["email","role"]
     ordering = ["email", "id"]
     filter_horizontal = []
+    
+@admin.register(LoginAttempt)
+class LoginAttemptAdmin(admin.ModelAdmin):
+    list_display = ('email', 'timestamp', 'success', 'ip_address', 'user_agent')
+    list_filter = ('success', 'timestamp', 'email')
+    search_fields = ('email', 'ip_address', 'user_agent')
 
 
 # Now register the new UserAdmin...
