@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import smart_str, force_str, smart_bytes, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from . import utils  # Make sure utils.py is in the same directory, or adjust the import as needed
+from .utils import Util  # Make sure utils.py is in the same directory, or adjust the import as needed
 
 class FreelancersSerializer(serializers.ModelSerializer):
     class Meta:
@@ -86,13 +86,13 @@ class SendPasswordResetEmailSerializer(serializers.ModelSerializer):
             link = 'http://localhost:3000/api/accounts/reset/'+uid+'/'+token
             print('Password Reset Link', link)
             #sending email
-            body = 'Click Following Link to Reset Your Password '+link,
+            body = 'Click Following Link to Reset Your Password \n ' + link
             data = {
-                'subject': 'Reset Your Password Link',
+                'subject': 'Reset Password Link',
                 'body': body,
                 'to_email': user.email
             }
-            utils.send_email(data)
+            Util.send_email(data)
             
             return attrs
         else:
