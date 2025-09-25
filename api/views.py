@@ -1,6 +1,6 @@
 #importing models from app
-from Hello.models import Freelancer_data 
-from recruiter.models import Recruiters_data 
+from Hello.models import Freelancer_detail 
+from recruiter.models import Recruiter_detail 
 from accounts.models import Users, LoginAttempt
 #importing serializers
 from . serializers import FreelancersSerializer
@@ -22,12 +22,13 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
 from rest_framework.permissions import IsAuthenticated
 
+
 # Create your views here.
 
 @api_view(['GET','POST'])
 def Freelancers(request):
     if request.method == 'GET':
-        Freelancer = Freelancer_data.objects.all()
+        Freelancer = Freelancer_detail.objects.all()
         serializer = FreelancersSerializer(Freelancer, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     elif request.method == 'POST':
@@ -39,10 +40,10 @@ def Freelancers(request):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 @api_view(['GET','PUT','DELETE'])    
-def freelancer_details(request,id):
+def freelancer_details(request,user_id):
     try:
-        Freelancer = Freelancer_data.objects.get(id=id)
-    except Freelancer_data.DoesNotExist:
+        Freelancer = Freelancer_detail.objects.get(user_id=user_id)
+    except Freelancer_detail.DoesNotExist:
         return Response({'error': 'Freelancer not found'}, status=status.HTTP_404_NOT_FOUND)   
         
     if request.method == 'GET':
@@ -61,7 +62,7 @@ def freelancer_details(request,id):
     
 class Recruiters(APIView):
     def get(self, request):
-        Recruiters = Recruiters_data.objects.all()
+        Recruiters = Recruiter_detail.objects.all()
         serializer = RecruitersSerializer(Recruiters, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
@@ -73,25 +74,25 @@ class Recruiters(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class recruiter_details(APIView):
-    def get_object(self,id):
+    def get_object(self,user_id):
         try:
-            return Recruiters_data.objects.get(id=id)
-        except Recruiters_data.DoesNotExist:
+            return Recruiter_detail.objects.get(user_id=user_id)
+        except Recruiter_detail.DoesNotExist:
             raise Http404
-    def get(self,request,id):
-        Recruiter = self.get_object(id)
+    def get(self,request,user_id):
+        Recruiter = self.get_object(user_id)
         serializer = RecruitersSerializer(Recruiter)
         return Response(serializer.data,status=status.HTTP_200_OK)
-    
-    def put(self,request,id):
-        Recruiter = self.get_object(id)
+
+    def put(self,request,user_id):
+        Recruiter = self.get_object(user_id)
         serializer = RecruitersSerializer(Recruiter,data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-    def delete(self,request,id):
-        Recruiter = self.get_object(id)
+    def delete(self,request,user_id):
+        Recruiter = self.get_object(user_id)
         Recruiter.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     

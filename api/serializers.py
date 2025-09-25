@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from Hello.models import Freelancer_data
-from recruiter.models import Recruiters_data
+from Hello.models import Freelancer_detail
+from recruiter.models import Recruiter_detail
 from accounts.models import Users 
 #imports required for reset password via email
 from django.core.exceptions import ValidationError
@@ -11,12 +11,12 @@ from .utils import Util  # Make sure utils.py is in the same directory, or adjus
 
 class FreelancersSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Freelancer_data
+        model = Freelancer_detail
         fields = '__all__'
         
 class RecruitersSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Recruiters_data
+        model = Recruiter_detail
         fields ='__all__'
         
 class UserRegistrationSerializer(serializers.ModelSerializer):
