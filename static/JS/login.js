@@ -1,4 +1,5 @@
 var homeUrl = "/Hello/Home";
+var RHomeUrl = "/recruiter/Rhome";
 document.addEventListener('DOMContentLoaded', function() {
     // Clear fields and messages on load to prevent autofill and old messages
     document.getElementById('loginEmail').value = '';
@@ -31,11 +32,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 resultDiv.id = 'result';
                 formEl.appendChild(resultDiv);
             }
-            // On success, redirect to home
+            // On success, redirect to backend-provided URL
             if (data.message || data.msg) {
                 resultDiv.innerHTML = `<div style="color:green;font-weight:600;font-size:1.1em;padding:8px 0;">${data.message || data.msg}<br>Redirecting to home...</div>`;
                 setTimeout(function() {
-                    window.location.href = homeUrl;
+                    window.location.href = data.redirect_url ;
                 }, 1500);
             } else if (typeof data === "object") {
                 // Show errors only, no field names

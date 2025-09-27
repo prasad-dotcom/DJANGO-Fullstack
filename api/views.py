@@ -138,7 +138,21 @@ class UserLoginView(APIView):
 
             if login_success:
                 token = get_tokens_for_user(user)
-                return Response({"token": token, "message": "Login successful"}, status=status.HTTP_200_OK)
+                # Set redirect_url based on user role
+                if user.role == 'recruiter':
+                    redirect_url = '/recruiter/Rhome'
+                    
+                elif user.role == 'freelancer':
+                    redirect_url = '/Hello/Home'
+                else:
+                    redirect_url = '/Hello/index'
+                #print("User role:", user.role, "Redirect URL:", redirect_url)
+                return Response({
+                    "token": token,
+                    "message": "Login successful",
+                    "redirect_url": redirect_url
+                }, status=status.HTTP_200_OK)
+                
             else:
                 return Response({"error": {"detail": "Invalid email or password"}}, status=status.HTTP_401_UNAUTHORIZED)
             

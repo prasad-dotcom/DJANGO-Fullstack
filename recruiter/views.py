@@ -2,5 +2,5 @@ from django.shortcuts import render,HttpResponse
 
 # Create your views here.
 
-def start(request):
-    return HttpResponse("Hello, Recruiter!")
+def recruiter_dashboard(request):
+    return render(request,'recruiter/recruiter_dashboard.html')
