@@ -37,9 +37,11 @@
           </a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
             <li><a class="dropdown-item" href="{% url 'profile_page' %}">Profile</a></li>
-            <li><a class="dropdown-item">Logout</a></li>
+            
+
             <li><a class="dropdown-item" href="{% url 'change_password_page' %}">Change Password</a></li>
             <li><a class="dropdown-item">Reset Password</a></li>
+            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
           </ul>
         </li>
       </ul>

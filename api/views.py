@@ -11,9 +11,10 @@ from . serializers import ProfileSerializer
 from . serializers import ChangePasswordSerializer
 from . serializers import SendPasswordResetEmailSerializer
 from . serializers import PasswordResetSerializer
+from . serializers import LogoutSerializer
 
 from rest_framework.response import Response #used for json format response for API
-from rest_framework import status #to return status.status=HttpErrors
+from rest_framework import status,permissions #to return status.status=HttpErrors
 from rest_framework.decorators import api_view #for function-based serializers
 from rest_framework.views import APIView  # for class-based function serializers
 from django.http import Http404
@@ -21,6 +22,7 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
 
 # Create your views here.
@@ -159,7 +161,7 @@ class UserLoginView(APIView):
 
 
 class ProfileView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None):
         user = request.user
@@ -168,7 +170,7 @@ class ProfileView(APIView):
     
     
 class ChangePasswordView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     
 
     def post(self, request, format=None):
@@ -191,4 +193,20 @@ class PasswordResetView(APIView):
         serializer = PasswordResetSerializer(data=request.data, context={'uid': uid, 'token': token})
         if serializer.is_valid(raise_exception=True):
             return Response({"message": "Password reset successful"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class LogoutView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        serializer = LogoutSerializer(data=request.data)
+        if serializer.is_valid():
+            refresh_token = serializer.validated_data["refresh"]
+            try:
+                token = RefreshToken(refresh_token)
+                token.blacklist()
+                return Response({"message": "Logout successful"}, status=status.HTTP_205_RESET_CONTENT)
+            except TokenError:
+                return Response({"error": "Invalid or expired token"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
