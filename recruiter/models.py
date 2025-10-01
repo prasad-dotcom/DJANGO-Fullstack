@@ -17,3 +17,20 @@ class Recruiter_detail(models.Model):
     @property
     def email(self):
         return self.user.email
+    
+class Job(models.Model):
+    id = models.AutoField(primary_key=True)  # Django adds this by default
+
+    recruiter = models.ForeignKey(Recruiter_detail, on_delete=models.CASCADE,related_name='jobs')
+    title = models.TextField(max_length=255)
+    description = models.TextField()
+    Responsibilities = models.TextField()
+    skills_required = models.TextField()
+    experience_required = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return self.title 
+    
+    
+    

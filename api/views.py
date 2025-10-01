@@ -2,6 +2,7 @@
 from Hello.models import Freelancer_detail 
 from recruiter.models import Recruiter_detail 
 from accounts.models import Users, LoginAttempt
+from recruiter.models import Job
 #importing serializers
 from . serializers import FreelancersSerializer
 from . serializers import RecruitersSerializer 
@@ -12,6 +13,7 @@ from . serializers import ChangePasswordSerializer
 from . serializers import SendPasswordResetEmailSerializer
 from . serializers import PasswordResetSerializer
 from . serializers import LogoutSerializer
+from . serializers import JobSerializer
 
 from rest_framework.response import Response #used for json format response for API
 from rest_framework import status,permissions #to return status.status=HttpErrors
@@ -195,7 +197,7 @@ class PasswordResetView(APIView):
             return Response({"message": "Password reset successful"}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    
+#logout funnctionality has to be fetched wiht Headers type as application/json body as Refresh token and the Authorization as bearer access token   
 class LogoutView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -210,3 +212,30 @@ class LogoutView(APIView):
             except TokenError:
                 return Response({"error": "Invalid or expired token"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class JobListCreateView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        
+        if request.user.role != 'recruiter':
+            return Response({'error': 'Only recruiters can post jobs.'}, status=status.HTTP_403_FORBIDDEN)
+        
+        try:
+            recruiter = Recruiter_detail.objects.get(user=request.user)
+        except Recruiter_detail.DoesNotExist:
+            return Response({'error': 'Recruiter profile not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = JobSerializer(data=request.data)
+        if serializer.is_valid():
+            # Save the job with the recruiter set from the token
+            serializer.save(recruiter=recruiter)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self,request):
+        jobs = Job.objects.filter(created_at__isnull=False).all()
+        serializer = JobSerializer(jobs, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        

@@ -13,4 +13,5 @@ urlpatterns = [
     path('accounts/passwordreset/',views.SendPasswordResetEmailView.as_view(),name='send_reset_password_email'),
     path('accounts/reset/<uid>/<token>/',views.PasswordResetView.as_view(),name='reset_password'),
     path('accounts/logout/',views.LogoutView.as_view(),name='logout'),
+    path('accounts/jobs/',views.JobListCreateView.as_view(),name='job_postings'),
 ]

@@ -2,6 +2,7 @@ from rest_framework import serializers
 from Hello.models import Freelancer_detail
 from recruiter.models import Recruiter_detail
 from accounts.models import Users 
+from recruiter.models import Job
 #imports required for reset password via email
 from django.core.exceptions import ValidationError
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -126,4 +127,14 @@ class PasswordResetSerializer(serializers.ModelSerializer):
         
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()
+    
+
+class JobSerializer(serializers.ModelSerializer):
+    recruiter_id = serializers.IntegerField(source='recruiter.user_id', read_only=True)
+    class Meta:
+        model = Job
+        fields = ['title','description','Responsibilities','skills_required','experience_required','recruiter_id']
+
+
+
          
