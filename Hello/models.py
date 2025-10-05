@@ -5,8 +5,7 @@ from accounts.models import Users
 
 class Freelancer_detail(models.Model):
     user = models.OneToOneField(Users, on_delete=models.CASCADE, primary_key=True)
-    age = models.IntegerField(null=True, blank=True)
-    skills = models.TextField(null=True, blank=True)
+
 
     def __str__(self):
         return self.user.name
