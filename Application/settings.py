@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'sendgrid',
+    'django_extensions',
     'rest_framework_simplejwt.token_blacklist',
     
     
@@ -212,6 +213,8 @@ CORS_ALLOWED_ORIGINS = [
 
     "http://localhost:8080",
     "http://127.0.0.1:9000",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
 ]
 
 CORS_ALLOW_METHODS = (

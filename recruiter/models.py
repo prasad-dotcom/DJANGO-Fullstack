@@ -5,7 +5,11 @@ from django.db import models
 class Recruiter_detail(models.Model):
     user = models.OneToOneField('accounts.Users', on_delete=models.CASCADE, primary_key=True)
     company_name = models.CharField(max_length=100,null=True, blank=True)
-    job_title = models.CharField(max_length=100,null=True, blank=True)
+    company_website = models.URLField(max_length=200, null=True, blank=True)
+    linkedin_profile = models.URLField(max_length=200, null=True, blank=True)
+    email = models.EmailField(("Email"), max_length=254)
+    
+    
     
     def __str__(self):
         return self.user.name

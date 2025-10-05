@@ -3,6 +3,7 @@ from Hello.models import Freelancer_detail
 from recruiter.models import Recruiter_detail 
 from accounts.models import Users, LoginAttempt
 from recruiter.models import Job
+from rest_framework.permissions import IsAuthenticated
 #importing serializers
 from . serializers import FreelancersSerializer
 from . serializers import RecruitersSerializer 
@@ -17,7 +18,8 @@ from . serializers import JobSerializer
 
 from rest_framework.response import Response #used for json format response for API
 from rest_framework import status,permissions #to return status.status=HttpErrors
-from rest_framework.decorators import api_view #for function-based serializers
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView  # for class-based function serializers
 from django.http import Http404
 from django.contrib.auth import authenticate
@@ -30,6 +32,7 @@ from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 # Create your views here.
 
 @api_view(['GET','POST'])
+@permission_classes([IsAuthenticated])
 def Freelancers(request):
     if request.method == 'GET':
         Freelancer = Freelancer_detail.objects.all()
@@ -43,25 +46,32 @@ def Freelancers(request):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
-@api_view(['GET','PUT','DELETE'])    
-def freelancer_details(request,user_id):
+@api_view(['GET','PUT','PATCH','DELETE'])
+@permission_classes([IsAuthenticated])
+def freelancer_details(request, user_id):
     try:
-        Freelancer = Freelancer_detail.objects.get(user_id=user_id)
+        freelancer = Freelancer_detail.objects.get(user_id=user_id)
     except Freelancer_detail.DoesNotExist:
-        return Response({'error': 'Freelancer not found'}, status=status.HTTP_404_NOT_FOUND)   
-        
+        return Response({'error': 'Freelancer not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    # owner check
+    if request.user.id != freelancer.user.id and not request.user.is_staff:
+        return Response({'detail': 'Forbidden'}, status=status.HTTP_403_FORBIDDEN)
+
     if request.method == 'GET':
-        serializer = FreelancersSerializer(Freelancer)
+        serializer = FreelancersSerializer(freelancer)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    elif request.method=='PUT':
-        serializer = FreelancersSerializer(Freelancer,data=request.data)
+
+    if request.method in ('PUT', 'PATCH'):
+        partial = True  # PATCH -> partial=True, PUT -> full by REST semantics (but you may allow partial=True for PUT too)
+        serializer = FreelancersSerializer(freelancer, data=request.data, partial=partial)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data,status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    elif request.method == 'DELETE':
-        Freelancer.delete()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    if request.method == 'DELETE':
+        freelancer.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
 class Recruiters(APIView):
@@ -78,26 +88,37 @@ class Recruiters(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class recruiter_details(APIView):
-    def get_object(self,user_id):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, user_id):
         try:
             return Recruiter_detail.objects.get(user_id=user_id)
         except Recruiter_detail.DoesNotExist:
             raise Http404
-    def get(self,request,user_id):
-        Recruiter = self.get_object(user_id)
-        serializer = RecruitersSerializer(Recruiter)
-        return Response(serializer.data,status=status.HTTP_200_OK)
 
-    def put(self,request,user_id):
-        Recruiter = self.get_object(user_id)
-        serializer = RecruitersSerializer(Recruiter,data=request.data)
+    def get(self, request, user_id):
+        obj = self.get_object(user_id)
+        if request.user.id != obj.user.id and not request.user.is_staff:
+            return Response({'detail': 'Forbidden'}, status=status.HTTP_403_FORBIDDEN)
+        serializer = RecruitersSerializer(obj)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, user_id):
+        obj = self.get_object(user_id)
+        if request.user.id != obj.user.id and not request.user.is_staff:
+            return Response({'detail': 'Forbidden'}, status=status.HTTP_403_FORBIDDEN)
+        # allow partial updates (use PATCH from frontend for partial)
+        serializer = RecruitersSerializer(obj, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data,status=status.HTTP_201_CREATED)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-    def delete(self,request,user_id):
-        Recruiter = self.get_object(user_id)
-        Recruiter.delete()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, user_id):
+        obj = self.get_object(user_id)
+        if request.user.id != obj.user.id and not request.user.is_staff:
+            return Response({'detail': 'Forbidden'}, status=status.HTTP_403_FORBIDDEN)
+        obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
 #generating token manually 
@@ -144,12 +165,12 @@ class UserLoginView(APIView):
                 token = get_tokens_for_user(user)
                 # Set redirect_url based on user role
                 if user.role == 'recruiter':
-                    redirect_url = '/recruiter/Rhome'
+                    redirect_url = 'http://localhost:3000/recruiter-dashboard'
                     
                 elif user.role == 'freelancer':
-                    redirect_url = '/Hello/Home'
+                    redirect_url = 'http://localhost:3000/freelancer-dashboard'
                 else:
-                    redirect_url = '/Hello/index'
+                    redirect_url = 'http://localhost:3000/login'
                 #print("User role:", user.role, "Redirect URL:", redirect_url)
                 return Response({
                     "token": token,
@@ -238,4 +259,3 @@ class JobListCreateView(APIView):
         jobs = Job.objects.filter(created_at__isnull=False).all()
         serializer = JobSerializer(jobs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-        

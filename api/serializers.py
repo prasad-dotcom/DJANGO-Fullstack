@@ -14,11 +14,13 @@ class FreelancersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Freelancer_detail
         fields = '__all__'
+        read_only_fields = ['user','email',]
         
 class RecruitersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recruiter_detail
         fields ='__all__'
+        
         
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input_type':'password'},write_only=True)
