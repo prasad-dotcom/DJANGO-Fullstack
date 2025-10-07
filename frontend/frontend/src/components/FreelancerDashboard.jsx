@@ -5,13 +5,36 @@ import './FreelancerDashboard.css';
 const FreelancerDashboard = () => {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    console.log('Logging out...');
-    navigate('/login');
+  const handleLogout = async () => {
+    
+    const accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
+    console.log('Logging out with tokens:', { accessToken, refreshToken });
+
+    try {
+      const res = await fetch('http://127.0.0.1:8000/api/v1/accounts/logout/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ refresh: refreshToken }),
+      });
+      if (!res.ok) throw new Error('Logout failed');
+      
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      navigate('/');
+    } catch (err) {
+      alert(err.message);
+      
+      navigate('/');
+    }
   };
 
   const handleProfile = () => {
     console.log('Navigating to profile...');
+    
     navigate('/profile');
   };
 
