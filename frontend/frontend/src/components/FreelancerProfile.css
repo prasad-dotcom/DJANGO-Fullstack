@@ -1,0 +1,685 @@
+/* FreelancerProfile.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+
+body, .freelancer-profile {
+  font-family: 'Poppins', Arial, sans-serif;
+  background: linear-gradient(135deg, #38124A, #000000);
+  color: #222;
+  margin: 0;
+  padding: 0;
+}
+
+.freelancer-profile {
+  padding: 0;
+  margin-top: 4rem;
+  margin-bottom: 4rem; /* Space below navbar */
+}
+
+.profile-container {
+  max-width: 1200px;
+  margin: 4rem auto 2rem auto; /* 4rem top margin for space below navbar */
+  padding: 40px 2rem;
+  padding-top: 2rem; 
+       /* Left/right padding for outer spacing */
+}
+
+.profile-header {
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+
+  
+}
+
+.profile-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #222;
+  margin: 0;
+}
+
+.title-accent {
+  color: #EC4186;
+  font-weight: 700;
+}
+
+/* Sticky left column */
+.profile-section {
+  position: sticky;
+  top: 2rem;
+  height: fit-content;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem; /* Space between left grids */
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(44, 44, 44, 0.07);
+  padding: 1.2rem;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 370px 1fr;
+  gap: 3.5rem;            /* Increased gap for clear separation */
+  align-items: flex-start;
+  width: 100%;
+}
+
+/* Ensure both columns start at the same top position */
+.profile-grid {
+  align-items: start;
+}
+
+/* Remove any extra top margin or padding from the first card in each column */
+.profile-left > *:first-child,
+.profile-content > *:first-child {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+/* Left column: vertical spacing between cards */
+.profile-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;            /* Space between left cards */
+}
+
+/* Right column: vertical spacing between cards */
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;            /* Space between right cards */
+  position: relative; /* Ensure dropdown is positioned relative to the right column */
+  z-index: 1;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.7rem;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.section-edit-btn,
+.section-save-btn {
+  background: #EC4186;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.3rem 1rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.section-edit-btn:hover,
+.section-save-btn:hover {
+  background: green;
+}
+
+.profile-photo-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.profile-photo-placeholder {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: #f3f3f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.7rem;
+  overflow: hidden;
+}
+
+.photo-upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.photo-icon {
+  font-size: 2rem;
+  color: #EC4186;
+  margin-bottom: 0.3rem;
+}
+
+.upload-photo-btn {
+  background: #fff;
+  color: #EC4186;
+  border: 1px solid #EC4186;
+  border-radius: 6px;
+  padding: 0.2rem 0.7rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-top: 0.2rem;
+  transition: background 0.2s, color 0.2s;
+}
+.upload-photo-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.profile-info {
+  margin-top: 0.5rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.7rem;
+}
+
+.input-group label {
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 0.2rem;
+}
+
+.profile-input,
+.profile-textarea,
+select.profile-input {
+  font-size: 1rem;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: #fafafd;
+  color: #222;
+  outline: none;
+  margin-bottom: 0.1rem;
+  transition: border 0.2s;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+.profile-input:disabled,
+.profile-textarea:disabled {
+  background: #f3f3f7;
+  color: #aaa;
+}
+
+.profile-textarea {
+  resize: vertical;
+  min-height: 40px;
+  max-height: 120px;
+}
+
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem; /* Small margin between sections */
+}
+
+.bio-section,
+.contact-section,
+.resume-section,
+.badge-section,
+.skills-section,
+.social-section,
+.education-section,
+.languages-section,
+.preferences-section {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(44, 44, 44, 0.07);
+  padding: 1.2rem 1.2rem 1rem 1.2rem;
+  margin-bottom: 0; /* Use gap in .profile-content for spacing */
+}
+
+.contact-grid,
+.skills-grid,
+.social-grid,
+.education-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.file-upload-area {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.upload-resume-btn {
+  background: #EC4186;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.3rem 1rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  
+}
+
+.badge-section {
+  padding: 1rem;
+  margin-bottom: 0;
+}
+
+.badge-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.badge-icon {
+  font-size: 2.2rem;
+  color: #EC4186;
+}
+
+.badge-content {
+  flex: 1;
+}
+
+.badge-level {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.badge-title {
+  font-size: 0.95rem;
+  color: #666;
+}
+
+.badge-progress {
+  margin-top: 0.3rem;
+}
+
+.progress-text {
+  font-size: 0.9rem;
+  color: #888;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #f3f3f7;
+  border-radius: 4px;
+  margin-top: 0.2rem;
+  overflow: hidden;
+}
+
+.progress-fill {
+  width: 80%; /* Example: 80% progress */
+  height: 100%;
+  background: linear-gradient(90deg, #EC4186 60%, #EE544A 100%);
+  border-radius: 4px;
+}
+
+.languages-container {
+  margin-top: 0.5rem;
+}
+
+.language-input-group {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.add-language-btn {
+  background: #EC4186;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.2rem 0.7rem;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.add-language-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.languages-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.language-tag {
+  background: #f3f3f7;
+  color: #333;
+  border-radius: 12px;
+  padding: 0.2rem 0.8rem;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.remove-language-btn {
+  background: none;
+  border: none;
+  color: #EC4186;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-left: 0.2rem;
+}
+
+.save-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(44,44,44,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.save-modal {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(44,44,44,0.12);
+  padding: 2rem 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.save-modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.save-modal-icon {
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.save-modal-text {
+  font-size: 1.1rem;
+  color: #222;
+  font-weight: 500;
+}
+
+/* Personal Information, Contact Details, Level Badge: visually separated */
+.personal-info-grid,
+.contact-details-grid,
+.level-badge-grid {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 1px 8px rgba(44,44,44,0.07);
+  padding: 1.2rem 1.2rem 1rem 1.2rem;
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+/* Remove margin from last grid */
+.profile-section > :last-child {
+  margin-bottom: 0;
+}
+
+/* Headings: consistent font, size, and alignment */
+.profile-heading {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #EC4186;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: 0.02em;
+  text-align: left;
+}
+
+/* Info labels and values */
+.info-label {
+  font-size: 0.98rem;
+  color: #666;
+  margin-bottom: 0.1rem;
+  font-weight: 500;
+}
+.info-value {
+  font-size: 1.05rem;
+  color: #222;
+  font-weight: 400;
+  margin-bottom: 0.5rem;
+}
+
+/* Badge grid: center badge and text */
+.level-badge-grid {
+  align-items: center;
+  text-align: center;
+}
+.level-badge-grid .badge-icon {
+  font-size: 2rem;
+  color: #EE544A;
+  margin-bottom: 0.3rem;
+}
+.level-badge-grid .badge-level {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.2rem;
+}
+
+
+/* Stack phone and email vertically */
+.contact-details-grid .contact-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem; /* space between fields */
+}
+
+/* Optional: style each field for clarity */
+.contact-details-grid .contact-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-details-grid .info-label {
+  font-size: 0.98rem;
+  color: #666;
+  font-weight: 500;
+  margin-bottom: 0.1rem;
+}
+
+.contact-details-grid .info-value {
+  font-size: 1.05rem;
+  color: #222;
+  font-weight: 400;
+  background: #f3f3f7;
+  border-radius: 6px;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 0;
+}
+
+/* Responsive: stack grids vertically */
+@media (max-width: 900px) {
+  .personal-info-grid,
+  .contact-details-grid,
+  .level-badge-grid {
+    margin-bottom: 0.7rem;
+    padding: 0.7rem;
+  }
+  .profile-heading {
+    font-size: 1rem;
+  }
+  .profile-container {
+    padding: 0 1rem;
+    margin: 1.5rem auto;
+  }
+  .profile-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .profile-left,
+  .profile-content {
+    gap: 1rem;
+  }
+  .profile-section {
+    position: static;
+    top: auto;
+    width: 100%;
+    gap: 1rem;
+  }
+  .profile-content {
+    gap: 1rem;
+  }
+  .profile-left {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .profile-container {
+    padding: 0.5rem;
+  }
+  .profile-header {
+    padding-bottom: 0.2rem;
+  }
+  .profile-section,
+  .bio-section,
+  .contact-section,
+  .resume-section,
+  .badge-section,
+  .skills-section,
+  .social-section,
+  .education-section,
+  .languages-section,
+  .preferences-section {
+    padding: 0.7rem;
+    border-radius: 10px;
+  }
+  .profile-title {
+    font-size: 1.3rem;
+  }
+}
+
+/* Prevent overflow for long content */
+.profile-section,
+.bio-section,
+.contact-section,
+.resume-section,
+.badge-section,
+.skills-section,
+.social-section,
+.education-section,
+.languages-section,
+.preferences-section {
+  overflow: hidden;
+  word-break: break-word;
+  box-sizing: border-box;
+}
+
+.contact-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.7rem;
+}
+
+.file-upload-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.profile-nav {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(44,44,44,0.07);
+  padding: 1.2rem 1.2rem 1rem 1.2rem;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: nowrap; /* Keep in a single line */
+  overflow-x: auto;
+}
+
+.profile-nav button {
+  background: none;
+  border: none;
+  color: #EC4186;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.3rem 0.8rem;
+  border-radius: 6px;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+
+.profile-nav button:hover {
+  background: #f3f3f7;
+  color: #EE544A;
+}
+
+/* Dropdown styles */
+.nav-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.nav-dropdown-btn {
+  background: none;
+  border: none;
+  color: #EC4186;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.3rem 0.8rem;
+  border-radius: 6px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.nav-dropdown-btn:hover {
+  background: #f3f3f7;
+  color: #EE544A;
+}
+
+.nav-dropdown-content {
+  display: none;
+  position: fixed; /* Use fixed so it pops out over everything */
+  right: 2rem;     /* Align with the right edge of the grid/card */
+  top: 7.5rem;     /* Adjust this value to match the vertical position of your nav bar */
+  background: #fff;
+  min-width: 180px;
+  box-shadow: 0 2px 8px rgba(44,44,44,0.12);
+  border-radius: 10px;
+  z-index: 9999;   /* High z-index to ensure it appears above all content */
+  flex-direction: column;
+  padding: 0.5rem 0;
+}
+
+.nav-dropdown:hover .nav-dropdown-content,
+.nav-dropdown:focus-within .nav-dropdown-content {
+  display: flex;
+}
+
+.nav-dropdown-content button {
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  color: #EC4186;
+  background: none;
+  border: none;
+  border-radius: 0;
+  transition: background 0.2s, color 0.2s;
+}
+
+.nav-dropdown-content button:hover {
+  background: #f3f3f7;
+  color: #EE544A;
+}

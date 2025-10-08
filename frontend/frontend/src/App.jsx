@@ -8,6 +8,7 @@ import Register from './components/Register';
 import FreelancerDashboard from './components/FreelancerDashboard';
 import RecruiterDashboard from './components/RecruiterDashboard';
 import Profile from './components/Profile';
+import FreelancerProfile from './components/FreelancerProfile';
 import './App.css';
 
 function App() {
@@ -54,6 +55,13 @@ function App() {
           <Route path="/profile" element={
             <Profile />
           } />
+
+          {/* Freelancer Profile Page */}
+          <Route path="/freelancer-profile" element={
+            <FreelancerProfile />
+          } />
+
+
         </Routes>
       </div>
     </Router>
