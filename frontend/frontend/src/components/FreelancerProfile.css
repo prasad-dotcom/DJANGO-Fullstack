@@ -10,24 +10,20 @@ body, .freelancer-profile {
 }
 
 .freelancer-profile {
-  padding: 0;
   margin-top: 4rem;
-  margin-bottom: 4rem; /* Space below navbar */
+  margin-bottom: 4rem;
+  padding: 0;
 }
 
 .profile-container {
   max-width: 1200px;
-  margin: 4rem auto 2rem auto; /* 4rem top margin for space below navbar */
-  padding: 40px 2rem;
-  padding-top: 2rem; 
-       /* Left/right padding for outer spacing */
+  margin: 4rem auto 2rem auto;
+  padding: 2rem 2rem 0 2rem;
 }
 
 .profile-header {
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
-
-  
 }
 
 .profile-title {
@@ -42,55 +38,32 @@ body, .freelancer-profile {
   font-weight: 700;
 }
 
-/* Sticky left column */
-.profile-section {
-  position: sticky;
-  top: 2rem;
-  height: fit-content;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem; /* Space between left grids */
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(44, 44, 44, 0.07);
-  padding: 1.2rem;
-}
-
 .profile-grid {
   display: grid;
   grid-template-columns: 370px 1fr;
-  gap: 3.5rem;            /* Increased gap for clear separation */
-  align-items: flex-start;
+  gap: 3.5rem;
+  align-items: start;
   width: 100%;
 }
 
-/* Ensure both columns start at the same top position */
-.profile-grid {
-  align-items: start;
+.profile-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
-/* Remove any extra top margin or padding from the first card in each column */
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
 .profile-left > *:first-child,
 .profile-content > *:first-child {
   margin-top: 0;
   padding-top: 0;
-}
-
-/* Left column: vertical spacing between cards */
-.profile-left {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;            /* Space between left cards */
-}
-
-/* Right column: vertical spacing between cards */
-.profile-content {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;            /* Space between right cards */
-  position: relative; /* Ensure dropdown is positioned relative to the right column */
-  z-index: 1;
 }
 
 .section-header {
@@ -155,19 +128,19 @@ body, .freelancer-profile {
 }
 
 .upload-photo-btn {
-  background: #fff;
-  color: #EC4186;
-  border: 1px solid #EC4186;
+  background: #EC4186;
+  color: #fff;
+  border: none;
   border-radius: 6px;
-  padding: 0.2rem 0.7rem;
-  font-size: 0.9rem;
+  padding: 0.3rem 1rem;
+  font-size: 0.95rem;
   cursor: pointer;
-  margin-top: 0.2rem;
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.2s;
 }
+
 .upload-photo-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  background: #f3f3f7;
+  color: #aaa;
 }
 
 .profile-info {
@@ -216,12 +189,6 @@ select.profile-input {
   max-height: 120px;
 }
 
-.profile-content {
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem; /* Small margin between sections */
-}
-
 .bio-section,
 .contact-section,
 .resume-section,
@@ -235,21 +202,23 @@ select.profile-input {
   border-radius: 16px;
   box-shadow: 0 2px 8px rgba(44, 44, 44, 0.07);
   padding: 1.2rem 1.2rem 1rem 1.2rem;
-  margin-bottom: 0; /* Use gap in .profile-content for spacing */
+  margin-bottom: 0;
 }
 
 .contact-grid,
 .skills-grid,
 .social-grid,
 .education-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+ flex-direction: column;
   gap: 1rem;
 }
 
 .file-upload-area {
   display: flex;
+  justify-content: center;
   align-items: center;
+  width: 100%;
   gap: 1rem;
   margin-top: 0.5rem;
 }
@@ -263,7 +232,6 @@ select.profile-input {
   font-size: 0.95rem;
   cursor: pointer;
   transition: background 0.2s;
-  
 }
 
 .badge-section {
@@ -316,7 +284,7 @@ select.profile-input {
 }
 
 .progress-fill {
-  width: 80%; /* Example: 80% progress */
+  width: 80%;
   height: 100%;
   background: linear-gradient(90deg, #EC4186 60%, #EE544A 100%);
   border-radius: 4px;
@@ -587,13 +555,6 @@ select.profile-input {
   margin-bottom: 0.7rem;
 }
 
-.file-upload-area {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-
 .profile-nav {
   background: #fff;
   border-radius: 16px;
@@ -603,7 +564,7 @@ select.profile-input {
   display: flex;
   align-items: center;
   gap: 1rem;
-  flex-wrap: nowrap; /* Keep in a single line */
+  flex-wrap: nowrap;
   overflow-x: auto;
 }
 
@@ -618,6 +579,9 @@ select.profile-input {
   border-radius: 6px;
   transition: background 0.2s, color 0.2s;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .profile-nav button:hover {
@@ -641,6 +605,9 @@ select.profile-input {
   padding: 0.3rem 0.8rem;
   border-radius: 6px;
   transition: background 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .nav-dropdown-btn:hover {
@@ -650,14 +617,14 @@ select.profile-input {
 
 .nav-dropdown-content {
   display: none;
-  position: fixed; /* Use fixed so it pops out over everything */
-  right: 2rem;     /* Align with the right edge of the grid/card */
-  top: 7.5rem;     /* Adjust this value to match the vertical position of your nav bar */
+  position: fixed;
+  right: 2rem;
+  top: 7.5rem;
   background: #fff;
   min-width: 180px;
   box-shadow: 0 2px 8px rgba(44,44,44,0.12);
   border-radius: 10px;
-  z-index: 9999;   /* High z-index to ensure it appears above all content */
+  z-index: 9999;
   flex-direction: column;
   padding: 0.5rem 0;
 }
@@ -677,6 +644,8 @@ select.profile-input {
   border: none;
   border-radius: 0;
   transition: background 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
 }
 
 .nav-dropdown-content button:hover {

@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'sendgrid',
     'rest_framework_simplejwt.token_blacklist',
+    'phonenumber_field',
     
     
     
@@ -87,6 +88,9 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Application.wsgi.application'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 
 # Database

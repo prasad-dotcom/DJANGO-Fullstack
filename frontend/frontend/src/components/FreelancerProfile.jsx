@@ -5,21 +5,22 @@ const FreelancerProfile = () => {
   const [editingSections, setEditingSections] = useState({});
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [profileData, setProfileData] = useState({
-    name: 'John Doe',
-    course: 'Computer Science',
-    bio: 'Experienced full-stack developer with 5+ years of experience in React, Node.js, and Python. Passionate about creating innovative solutions and delivering high-quality software.',
-    phone: '+1 (555) 123-4567',
-    email: 'john.doe@email.com',
-    linkedin: 'https://linkedin.com/in/johndoe',
-    github: 'https://github.com/johndoe',
-    portfolio: 'https://johndoe.dev',
-    skills: 'React, Node.js, Python, JavaScript, TypeScript, MongoDB, PostgreSQL, AWS, Docker',
-    experience: '5+ years of experience in web development. Worked on various projects including e-commerce platforms, SaaS applications, and mobile apps.',
+    profilePhoto: null,
+    name: '',
+    course: '',
+    bio: '',
+    phone: '',
+    email: '',
+    linkedin: '',
+    github: '',
+    portfolio: '',
+    skills: '',
+    experience: '',
     languages: ['English', 'Spanish', 'French'],
-    courseName: 'Bachelor of Computer Science',
-    university: 'University of Technology',
-    completionDate: '2020-06-15',
-    jobPreferences: 'Looking for remote full-stack developer positions. Prefer startups and innovative companies. Open to both contract and full-time opportunities.'
+    courseName: '',
+    university: '',
+    completionDate: '',
+    jobPreferences: ''
   });
 
   const [newLanguage, setNewLanguage] = useState('');
@@ -93,13 +94,44 @@ const FreelancerProfile = () => {
               <h2 className="profile-heading">Personal Information</h2>
               <div className="profile-photo-section">
                 <div className="profile-photo-placeholder">
-                  <div className="photo-upload-area">
-                    <div className="photo-icon">📷</div>
-                    <button className="upload-photo-btn" disabled={!editingSections.profile}>
-                      Upload Photo
-                    </button>
-                  </div>
+                  {profileData.profilePhoto ? (
+                    <img
+                      src={profileData.profilePhoto}
+                      alt="Profile"
+                      style={{ width: '90px', height: '90px', borderRadius: '50%' }}
+                    />
+                  ) : (
+                    <div className="photo-upload-area">
+                      <div className="photo-icon">📷</div>
+                    </div>
+                  )}
                 </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  id="profile-photo-input"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = (ev) => {
+                        handleInputChange('profilePhoto', ev.target.result);
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                  disabled={!editingSections.profile}
+                />
+                <label htmlFor="profile-photo-input">
+                  <button
+                    className="upload-photo-btn"
+                    disabled={!editingSections.profile}
+                    type="button"
+                  >
+                    Upload Photo
+                  </button>
+                </label>
               </div>
               <div className="profile-info">
                 <div className="input-group">
@@ -190,7 +222,8 @@ const FreelancerProfile = () => {
             <div className="profile-nav">
               <button onClick={() => document.getElementById('bio-section').scrollIntoView({ behavior: 'smooth' })}>Profile Summary / Bio</button>
               <button onClick={() => document.getElementById('resume-section').scrollIntoView({ behavior: 'smooth' })}>Resume</button>
-              <button onClick={() => document.getElementById('skills-section').scrollIntoView({ behavior: 'smooth' })}>Skills & Experience</button>
+              <button onClick={() => document.getElementById('skills-section').scrollIntoView({ behavior: 'smooth' })}>Skills</button>
+              <button onClick={() => document.getElementById('experience-section').scrollIntoView({ behavior: 'smooth' })}>Experience</button>
               {/* Dropdown for remaining items */}
               <div className="nav-dropdown">
                 <button className="nav-dropdown-btn">More ▼</button>
@@ -249,10 +282,10 @@ const FreelancerProfile = () => {
               </div>
             </div>
 
-            {/* Skills and Experience Section */}
+            {/* Skills Section */}
             <div id="skills-section" className="skills-section">
               <div className="section-header">
-                <h3 className="section-title">Skills and Experience</h3>
+                <h3 className="section-title">Skills</h3>
                 {!editingSections.skills ? (
                   <button className="section-edit-btn" onClick={() => handleSectionEdit('skills')}>
                     Edit
@@ -275,15 +308,33 @@ const FreelancerProfile = () => {
                     placeholder="List your technical skills separated by commas"
                   />
                 </div>
+              </div>
+            </div>
+
+            {/* Experience Section */}
+            <div id="experience-section" className="experience-section">
+              <div className="section-header">
+                <h3 className="section-title">Experience</h3>
+                {!editingSections.experience ? (
+                  <button className="section-edit-btn" onClick={() => handleSectionEdit('experience')}>
+                    Edit
+                  </button>
+                ) : (
+                  <button className="section-save-btn" onClick={() => handleSectionSave('experience')}>
+                    Save
+                  </button>
+                )}
+              </div>
+              <div className="experience-grid">
                 <div className="input-group">
-                  <label>Experience</label>
+                  <label></label>
                   <textarea
                     value={profileData.experience}
                     onChange={(e) => handleInputChange('experience', e.target.value)}
-                    disabled={!editingSections.skills}
+                    disabled={!editingSections.experience}
                     className="profile-textarea"
                     rows="3"
-                    placeholder="Describe your professional experience"
+                    placeholder="List your work experience"
                   />
                 </div>
               </div>
