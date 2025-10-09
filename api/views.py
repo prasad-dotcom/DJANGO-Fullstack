@@ -25,6 +25,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from rest_framework.decorators import parser_classes, permission_classes
+import json
 
 
 # Create your views here.
@@ -34,6 +37,7 @@ def Freelancers(request):
     if request.method == 'GET':
         Freelancer = Freelancer_detail.objects.all()
         serializer = FreelancersSerializer(Freelancer, many=True)
+        
         return Response(serializer.data, status=status.HTTP_200_OK)
     elif request.method == 'POST':
         serializer = FreelancersSerializer(data=request.data)
@@ -43,23 +47,40 @@ def Freelancers(request):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
-@api_view(['GET','PUT','DELETE'])    
-def freelancer_details(request,user_id):
+@api_view(['GET','PUT','PATCH','DELETE'])
+@parser_classes([MultiPartParser, FormParser, JSONParser])
+@permission_classes([IsAuthenticated])
+def freelancer_details(request, user_id):
+
     try:
         Freelancer = Freelancer_detail.objects.get(user_id=user_id)
     except Freelancer_detail.DoesNotExist:
-        return Response({'error': 'Freelancer not found'}, status=status.HTTP_404_NOT_FOUND)   
-        
+        return Response({'error': 'Freelancer not found'}, status=status.HTTP_404_NOT_FOUND)
+
     if request.method == 'GET':
         serializer = FreelancersSerializer(Freelancer)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    elif request.method=='PUT':
-        serializer = FreelancersSerializer(Freelancer,data=request.data)
+
+    elif request.method in ('PUT', 'PATCH'):
+        # copy so we can mutate (QueryDict from multipart)
+        data = request.data.copy()
+
+        # if languages sent as JSON string in FormData, parse it to list
+        if 'languages' in data and isinstance(data['languages'], str):
+            try:
+                data['languages'] = json.loads(data['languages'])
+            except Exception:
+                # leave as-is or convert to single-item list
+                data['languages'] = [data['languages']]
+
+        partial = (request.method == 'PATCH')
+        serializer = FreelancersSerializer(Freelancer, data=data, partial=partial)
         if serializer.is_valid():
+            # ensure owner remains unchanged; serializer should have user as read_only
             serializer.save()
-            return Response(serializer.data,status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     elif request.method == 'DELETE':
         Freelancer.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -167,8 +188,18 @@ class ProfileView(APIView):
 
     def get(self, request, format=None):
         user = request.user
-        serializer = ProfileSerializer(instance=user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        user_serializer = ProfileSerializer(instance=user)
+
+        try:
+            freelancer = Freelancer_detail.objects.get(user=user)
+            freelancer_serializer = FreelancersSerializer(instance=freelancer)
+            payload = {
+                "user": user_serializer.data,
+                "freelancer": freelancer_serializer.data
+            }
+            return Response(payload, status=status.HTTP_200_OK)
+        except Freelancer_detail.DoesNotExist:
+            return Response({"user": user_serializer.data, "freelancer": None}, status=status.HTTP_200_OK)
     
     
 class ChangePasswordView(APIView):
@@ -238,4 +269,3 @@ class JobListCreateView(APIView):
         jobs = Job.objects.filter(created_at__isnull=False).all()
         serializer = JobSerializer(jobs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-        

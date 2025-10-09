@@ -89,8 +89,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Application.wsgi.application'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+print(os.path.join(MEDIA_ROOT, 'profile_photos', 'Passport_photo.JPG'))
+print(os.path.exists(os.path.join(MEDIA_ROOT, 'profile_photos', 'Passport_photo.JPG')))
+
 
 
 # Database
@@ -179,7 +183,7 @@ DEFAULT_FROM_EMAIL = 'zimbeam2499@gmail.com'
 
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=50),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     
 

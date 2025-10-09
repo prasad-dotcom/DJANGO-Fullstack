@@ -16,7 +16,7 @@ const RecruiterDashboard = () => {
     
     const accessToken = localStorage.getItem('accessToken');
     const refreshToken = localStorage.getItem('refreshToken');
-    console.log('Logging out with tokens:', { accessToken, refreshToken });
+    
 
     try {
       const res = await fetch('http://127.0.0.1:8000/api/v1/accounts/logout/', {
