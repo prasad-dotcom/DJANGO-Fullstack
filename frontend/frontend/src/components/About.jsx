@@ -7,11 +7,11 @@ const About = () => {
       <div className="about-container">
         <div className="about-content">
           <h2 className="about-title">
-            About FreelanceConnect
+            About TalentLoop
           </h2>
           
           <p className="about-description">
-            FreelanceConnect is a platform built to bridge the gap between talented freelancers and recruiters, 
+            TalentLoop is a cutting-edge platform built to bridge the gap between talented freelancers and recruiters, 
             offering a seamless hiring and project collaboration experience. Our mission is to empower creative 
             professionals and businesses to connect, collaborate, and create amazing opportunities together.
           </p>

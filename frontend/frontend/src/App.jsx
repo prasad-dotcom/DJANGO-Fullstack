@@ -9,6 +9,7 @@ import FreelancerDashboard from './components/FreelancerDashboard';
 import RecruiterDashboard from './components/RecruiterDashboard';
 import Profile from './components/Profile';
 import FreelancerProfile from './components/FreelancerProfile';
+import RecruiterProfile from './components/RecruiterProfile';
 import './App.css';
 
 function App() {
@@ -59,6 +60,11 @@ function App() {
           {/* Freelancer Profile Page */}
           <Route path="/freelancer-profile" element={
             <FreelancerProfile />
+          } />
+
+          {/* Recruiter Profile Page */}
+          <Route path="/recruiter-profile" element={
+            <RecruiterProfile />
           } />
 
 

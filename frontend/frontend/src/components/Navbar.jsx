@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Navbar.css';
+import logo from '../Pics/TalentLoop logo.png';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -17,7 +18,12 @@ const Navbar = () => {
       <div className="navbar-container">
         <div className="navbar-logo">
           <Link to="/" className="logo-link">
-            FreelanceConnect
+            <img 
+              src={logo} 
+              alt="TalentLoop Logo" 
+              className="logo-image"
+            />
+            <span className="logo-text">TalentLoop</span>
           </Link>
         </div>
         

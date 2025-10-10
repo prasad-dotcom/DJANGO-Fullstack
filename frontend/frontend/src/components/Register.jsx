@@ -70,7 +70,7 @@ const Register = () => {
     <div className="register-page">
       <div className="register-container">
         <div className="register-header">
-          <h1 className="register-title">Join FreelanceConnect</h1>
+          <h1 className="register-title">Join TalentLoop</h1>
           <p className="register-subtitle">Create your account and start your journey</p>
         </div>
 

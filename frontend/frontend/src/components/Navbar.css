@@ -25,18 +25,55 @@
 
 .logo-link {
   text-decoration: none;
-  font-size: 1.8rem;
-  font-weight: 700;
-  background: linear-gradient(90deg, #EC4186, #EE544A);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   transition: all 0.3s ease;
 }
 
 .logo-link:hover {
-  transform: scale(1.05);
-  filter: drop-shadow(0 0 10px rgba(236, 65, 134, 0.5));
+  transform: translateY(-2px);
+  filter: drop-shadow(0 4px 8px rgba(236, 65, 134, 0.4));
+}
+
+.logo-image {
+  height: 45px;
+  width: auto;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 2px 6px rgba(236, 65, 134, 0.3));
+}
+
+.logo-link:hover .logo-image {
+  filter: drop-shadow(0 4px 12px rgba(236, 65, 134, 0.6));
+}
+
+.logo-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #EC4186, #EE544A, #FFFFFF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 20px rgba(236, 65, 134, 0.5);
+  position: relative;
+}
+
+.logo-text::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #EC4186, #EE544A);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.logo-link:hover .logo-text::after {
+  transform: scaleX(1);
 }
 
 .navbar-buttons {
@@ -76,8 +113,16 @@
     padding: 0 1rem;
   }
   
-  .logo-link {
+  .logo-image {
+    height: 35px;
+  }
+  
+  .logo-text {
     font-size: 1.5rem;
+  }
+  
+  .logo-link {
+    gap: 8px;
   }
   
   .navbar-buttons {
@@ -90,3 +135,21 @@
   }
 }
 
+@media (max-width: 480px) {
+  .logo-image {
+    height: 30px;
+  }
+  
+  .logo-text {
+    font-size: 1.2rem;
+  }
+  
+  .navbar-buttons {
+    gap: 0.5rem;
+  }
+  
+  .nav-button {
+    padding: 6px 15px;
+    font-size: 0.85rem;
+  }
+}

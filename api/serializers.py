@@ -121,7 +121,7 @@ class FreelancersSerializer(serializers.ModelSerializer):
         except Exception:
             pass
 
-        # Best-effort normalization: strip non-digits, prefix +
+        
         digits = re.sub(r'\D', '', s)
         if not digits:
             raise serializers.ValidationError("Phone must contain digits.")
@@ -204,7 +204,7 @@ class SendPasswordResetEmailSerializer(serializers.ModelSerializer):
             #sending email
             body = 'Click Following Link to Reset Your Password \n ' + link
             data = {
-                'subject': 'Reset Password Link',
+                'subject': 'TALENT-LOOP | Reset Password Link',
                 'body': body,
                 'to_email': user.email
             }

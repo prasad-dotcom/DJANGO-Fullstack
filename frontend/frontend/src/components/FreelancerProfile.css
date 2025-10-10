@@ -22,8 +22,38 @@ body, .freelancer-profile {
 }
 
 .profile-header {
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 15px 0;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.back-btn,
+.change-password-btn {
+  padding: 12px 30px;
+  font-size: 16px;
+  font-weight: 600;
+  border: 2px solid #EC4186;
+  background: linear-gradient(135deg, #EC4186, #EE544A);
+  color: #FFFFFF;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(236, 65, 134, 0.5);
+  font-family: 'Poppins', sans-serif;
+}
+
+.back-btn:hover,
+.change-password-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 25px rgba(236, 65, 134, 0.8);
+  background: linear-gradient(135deg, #EE544A, #EC4186);
 }
 
 .profile-title {
@@ -45,7 +75,6 @@ body, .freelancer-profile {
   align-items: start;
   width: 100%;
   margin-top: 1rem;
-  
 }
 
 .profile-left {
@@ -139,8 +168,9 @@ body, .freelancer-profile {
 
 .profile-photo-container {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .profile-photo-placeholder {
@@ -258,7 +288,7 @@ select.profile-input:focus {
   backdrop-filter: blur(10px);
   border: 1px solid rgba(236, 65, 134, 0.2);
   border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 20px rgba(236, 65, 134, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 5px rgba(236, 65, 134, 0.05);
   padding: 1.5rem 1.8rem;
   margin-bottom: 1.5rem;
   margin-top: -1rem;
@@ -277,7 +307,7 @@ select.profile-input:focus {
   backdrop-filter: blur(10px);
   border: 1px solid rgba(236, 65, 134, 0.2);
   border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 20px rgba(236, 65, 134, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 5px rgba(236, 65, 134, 0.05);
   padding: 1.5rem 1.8rem;
   margin-bottom: 1.5rem;
 }
@@ -576,6 +606,131 @@ select.profile-input:focus {
   }
 }
 
+/* Password Modal */
+.password-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  backdrop-filter: blur(5px);
+}
+
+.password-modal {
+  background: linear-gradient(135deg, #38124A, #1a0a24);
+  border: 2px solid #EC4186;
+  border-radius: 20px;
+  padding: 30px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 0 40px rgba(236, 65, 134, 0.6);
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.password-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid rgba(236, 65, 134, 0.3);
+}
+
+.password-modal-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin: 0;
+}
+
+.close-modal-btn {
+  background: none;
+  border: none;
+  color: #EC4186;
+  font-size: 36px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.close-modal-btn:hover {
+  color: #EE544A;
+  transform: rotate(90deg);
+}
+
+.password-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.password-input {
+  width: 100%;
+  padding: 14px 18px;
+  font-size: 15px;
+  border: 2px solid rgba(236, 65, 134, 0.5);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.4);
+  color: #FFFFFF;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(236, 65, 134, 0.2);
+}
+
+.password-input:focus {
+  outline: none;
+  border-color: #EC4186;
+  box-shadow: 0 0 20px rgba(236, 65, 134, 0.5);
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.password-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.save-password-btn {
+  padding: 14px 30px;
+  font-size: 16px;
+  font-weight: 600;
+  border: 2px solid #28a745;
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: #FFFFFF;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(40, 167, 69, 0.5);
+  font-family: 'Poppins', sans-serif;
+  margin-top: 10px;
+}
+
+.save-password-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 25px rgba(40, 167, 69, 0.8);
+  background: linear-gradient(135deg, #20c997, #28a745);
+}
+
 /* Personal Information, Contact Details, Level Badge: visually separated */
 .personal-info-grid,
 .contact-details-grid,
@@ -584,7 +739,7 @@ select.profile-input:focus {
   backdrop-filter: blur(10px);
   border: 1px solid rgba(236, 65, 134, 0.2);
   border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 20px rgba(236, 65, 134, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 5px rgba(236, 65, 134, 0.05);
   padding: 1.5rem 1.8rem;
   margin-bottom: 1.5rem;
   display: flex;
@@ -766,18 +921,17 @@ select.profile-input:focus {
   backdrop-filter: blur(10px);
   border: 1px solid rgba(236, 65, 134, 0.2);
   border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), 0 0 10px rgba(236, 65, 134, 0.1);
-  padding: 0.6rem 0.8rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), 0 0 5px rgba(236, 65, 134, 0.05);
+  padding: 0.8rem 1rem;
   margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
-  gap: 0.3rem;
-  flex-wrap: nowrap;
+  gap: 0.6rem;
+  flex-wrap: wrap;
   justify-content: center;
   position: sticky;
   top: 2rem;
   z-index: 100;
-  overflow-x: auto;
 }
 
 .profile-nav button {
@@ -785,10 +939,10 @@ select.profile-input:focus {
   border: 1px solid rgba(236, 65, 134, 0.3);
   color: #FFFFFF;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   cursor: pointer;
-  padding: 0.3rem 0.5rem;
-  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
   transition: all 0.3s ease;
   white-space: nowrap;
   display: flex;
@@ -807,24 +961,39 @@ select.profile-input:focus {
 /* Responsive navbar adjustments */
 @media (max-width: 768px) {
   .profile-nav {
-    gap: 0.25rem;
-    padding: 0.5rem 0.4rem;
+    gap: 0.4rem;
+    padding: 0.6rem 0.5rem;
   }
   
   .profile-nav button {
-    font-size: 0.8rem;
-    padding: 0.25rem 0.4rem;
+    font-size: 0.85rem;
+    padding: 0.4rem 0.7rem;
+  }
+
+  .header-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .back-btn,
+  .change-password-btn {
+    width: 100%;
   }
 }
 
 @media (max-width: 480px) {
   .profile-nav {
-    gap: 0.2rem;
-    padding: 0.4rem 0.3rem;
+    gap: 0.3rem;
+    padding: 0.5rem 0.4rem;
   }
   
   .profile-nav button {
-    font-size: 0.75rem;
-    padding: 0.2rem 0.3rem;
+    font-size: 0.8rem;
+    padding: 0.35rem 0.6rem;
+  }
+
+  .password-modal {
+    width: 95%;
+    padding: 20px;
   }
 }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './FreelancerProfile.css';
 
 const PROFILE_API = 'http://127.0.0.1:8000/api/v1/accounts/profile/';
@@ -98,10 +99,11 @@ const saveProfileToServer = async (profileId, profileData, selectedProfileFile, 
 };
 
 const FreelancerProfile = () => {
+  const navigate = useNavigate();
   const [editingSections, setEditingSections] = useState({});
   const [showSaveModal, setShowSaveModal] = useState(false);
-
-  
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showPasswordSuccessModal, setShowPasswordSuccessModal] = useState(false);
   const [profileId, setProfileId] = useState(null);
   const [selectedProfileFile, setSelectedProfileFile] = useState(null);
   const [selectedResumeFile, setSelectedResumeFile] = useState(null);
@@ -123,6 +125,10 @@ const FreelancerProfile = () => {
   });
 
   const [newLanguage, setNewLanguage] = useState('');
+  const [passwordData, setPasswordData] = useState({
+    newPassword: '',
+    confirmPassword: ''
+  });
 
   const handleInputChange = (field, value) => {
     setProfileData(prev => ({
@@ -384,11 +390,52 @@ const FreelancerProfile = () => {
     }));
   };
 
+  const handleBackToDashboard = () => {
+    navigate('/freelancer-dashboard');
+  };
+
+  const handlePasswordChange = (field, value) => {
+    setPasswordData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleOpenPasswordModal = () => {
+    setShowPasswordModal(true);
+    setPasswordData({ newPassword: '', confirmPassword: '' });
+  };
+
+  const handleClosePasswordModal = () => {
+    setShowPasswordModal(false);
+    setPasswordData({ newPassword: '', confirmPassword: '' });
+  };
+
+  const handleSavePassword = () => {
+    if (passwordData.newPassword === passwordData.confirmPassword && passwordData.newPassword !== '') {
+      console.log('Password changed successfully');
+      setShowPasswordModal(false);
+      setShowPasswordSuccessModal(true);
+      setTimeout(() => setShowPasswordSuccessModal(false), 2000);
+      setPasswordData({ newPassword: '', confirmPassword: '' });
+    } else {
+      alert('Passwords do not match or are empty!');
+    }
+  };
+
   return (
     <div className="freelancer-profile">
       <div className="profile-container">
-        {/* Header */}
+        {/* Header with Back and Change Password Buttons */}
         <div className="profile-header">
+           <div className="header-buttons">
+            <button className="change-password-btn" onClick={handleOpenPasswordModal}>
+              Change Password
+            </button>
+            <button className="back-btn" onClick={handleBackToDashboard}>
+              Back
+            </button>
+          </div>
           
         </div>
 
@@ -404,12 +451,61 @@ const FreelancerProfile = () => {
           </div>
         )}
 
+         {/* Password Success Modal */}
+        {showPasswordSuccessModal && (
+          <div className="save-modal-top-overlay">
+            <div className="save-modal-top">
+              <div className="save-modal-top-content">
+                <div className="save-modal-top-icon">✅</div>
+                <p className="save-modal-top-text">Password Changed Successfully!</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Change Password Modal */}
+        {showPasswordModal && (
+          <div className="password-modal-overlay" onClick={handleClosePasswordModal}>
+            <div className="password-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="password-modal-header">
+                <h2>Change Password</h2>
+                <button className="close-modal-btn" onClick={handleClosePasswordModal}>
+                  ×
+                </button>
+              </div>
+              <div className="password-modal-content">
+                <div className="input-group">
+                  <label>New Password</label>
+                  <input
+                    type="password"
+                    value={passwordData.newPassword}
+                    onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
+                    className="password-input"
+                    placeholder="Enter new password"
+                  />
+                </div>
+                <div className="input-group">
+                  <label>Confirm Password</label>
+                  <input
+                    type="password"
+                    value={passwordData.confirmPassword}
+                    onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
+                    className="password-input"
+                    placeholder="Confirm new password"
+                  />
+                </div>
+                <button className="save-password-btn" onClick={handleSavePassword}>
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
  
         {/* Navigation Bar */}
         <div className="profile-nav">
-          <button onClick={() => document.getElementById('personal-info-section').scrollIntoView({ behavior: 'smooth' })}>Personal Info</button>
-          <button onClick={() => document.getElementById('contact-section').scrollIntoView({ behavior: 'smooth' })}>Contact</button>
-          <button onClick={() => document.getElementById('level-badge-section').scrollIntoView({ behavior: 'smooth' })}>Level Badge</button>
+          
           <button onClick={() => document.getElementById('bio-section').scrollIntoView({ behavior: 'smooth' })}>Profile Summary</button>
           <button onClick={() => document.getElementById('resume-section').scrollIntoView({ behavior: 'smooth' })}>Resume</button>
           <button onClick={() => document.getElementById('skills-section').scrollIntoView({ behavior: 'smooth' })}>Skills</button>
