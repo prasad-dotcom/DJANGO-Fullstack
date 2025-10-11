@@ -1,30 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './RecruiterProfile.css';
 
+const PROFILE_API = 'http://127.0.0.1:8000/api/v1/accounts/recruiter_profile/';
+const RECRUITER_API_BASE = 'http://127.0.0.1:8000/api/v1/recruiters/';
+
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('accessToken') || localStorage.getItem('access_token') || localStorage.getItem('token');
+  return token ? { Authorization: `Bearer ${token}`, Accept: 'application/json' } : { Accept: 'application/json' };
+};
+
 const RecruiterProfile = () => {
   const navigate = useNavigate();
-  const [editingSections, setEditingSections] = useState({});
-  const [showSaveModal, setShowSaveModal] = useState(false);
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [showPasswordSuccessModal, setShowPasswordSuccessModal] = useState(false);
-  
   const [profileData, setProfileData] = useState({
     companyLogo: '',
+    recruiterName: '',
     companyName: '',
-    employeeSize: '',
     aboutUs: '',
     contactEmail: '',
     companyMotive: '',
     linkedin: '',
     instagram: ''
   });
-
+  const [editingSections, setEditingSections] = useState({});
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showPasswordSuccessModal, setShowPasswordSuccessModal] = useState(false);
+  const [selectedLogoFile, setSelectedLogoFile] = useState(null);
+  const [userId, setUserId] = useState('');
   const [passwordData, setPasswordData] = useState({
     newPassword: '',
     confirmPassword: ''
   });
 
+  // Fetch profile data on mount
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const headers = getAuthHeaders();
+      const res = await fetch(PROFILE_API, { method: 'GET', headers });
+      if (!res.ok) return;
+      const data = await res.json();
+      const uid = data.user?.id || data.user?.user_id || localStorage.getItem('userId');
+      setUserId(uid);
+      if (data.recruiter) {
+        setProfileData({
+          recruiterName: data.user?.name ?? '',
+          contactEmail: data.user?.email ?? '',
+          aboutUs: data.recruiter?.about_us ?? '',
+          companyLogo: data.recruiter?.company_logo ?? '',
+          companyName: data.recruiter?.company_name ?? '',
+          companyMotive: data.recruiter?.company_motive ?? '',
+          instagram: data.recruiter?.instagram ?? '',
+          linkedin: data.recruiter?.linkedin ?? ''
+        });
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  // Controlled input handler
   const handleInputChange = (field, value) => {
     setProfileData(prev => ({
       ...prev,
@@ -32,13 +66,7 @@ const RecruiterProfile = () => {
     }));
   };
 
-  const handlePasswordChange = (field, value) => {
-    setPasswordData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
+  // Edit/save section logic
   const handleSectionEdit = (section) => {
     setEditingSections(prev => ({
       ...prev,
@@ -46,14 +74,56 @@ const RecruiterProfile = () => {
     }));
   };
 
-  const handleSectionSave = (section) => {
+  const handleSectionSave = async (section) => {
     setEditingSections(prev => ({
       ...prev,
       [section]: false
     }));
     setShowSaveModal(true);
     setTimeout(() => setShowSaveModal(false), 2000);
-    console.log(`${section} section saved:`, profileData);
+
+    if (!userId) {
+      alert('User ID not found. Cannot save.');
+      return;
+    }
+
+    const headers = getAuthHeaders();
+    const bodyFields = {
+      about_us: profileData.aboutUs,
+      company_logo: profileData.companyLogo,
+      company_name: profileData.companyName,
+      contact_email: profileData.contactEmail,
+      company_motive: profileData.companyMotive,
+      instagram: profileData.instagram,
+      linkedin: profileData.linkedin
+    };
+    const userId = localStorage.getItem('userId');
+    const url = `http://127.0.0.1:8000/api/v1/recruiters/${userId}/`;
+
+    // FIX: Assign fetch result to res
+    const res = await fetch(url, {
+      method: 'PATCH',
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify(bodyFields)
+    });
+
+    if (res.ok) {
+      const updated = await res.json();
+      setProfileData(prev => ({
+        ...prev,
+        recruiterName: updated.user?.name ?? '',
+        contactEmail: updated.user?.email ?? '',
+        companyLogo: updated.company_logo ?? prev.companyLogo,
+        companyName: updated.company_name ?? prev.companyName,
+        aboutUs: updated.about_us ?? prev.aboutUs,
+        companyMotive: updated.company_motive ?? prev.companyMotive,
+        linkedin: updated.linkedin ?? prev.linkedin,
+        instagram: updated.instagram ?? prev.instagram
+      }));
+      setSelectedLogoFile(null);
+    } else {
+      alert('Failed to save changes.');
+    }
   };
 
   const handleBackToDashboard = () => {
@@ -68,6 +138,13 @@ const RecruiterProfile = () => {
   const handleClosePasswordModal = () => {
     setShowPasswordModal(false);
     setPasswordData({ newPassword: '', confirmPassword: '' });
+  };
+
+  const handlePasswordChange = (field, value) => {
+    setPasswordData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   const handleSavePassword = () => {
@@ -163,16 +240,10 @@ const RecruiterProfile = () => {
         {/* Navigation Bar */}
         <div className="profile-nav">
           <button onClick={() => document.getElementById('company-info-section').scrollIntoView({ behavior: 'smooth' })}>
-            Company Info
-          </button>
-          <button onClick={() => document.getElementById('employee-size-section').scrollIntoView({ behavior: 'smooth' })}>
-            Employee Size
+            Personal Info
           </button>
           <button onClick={() => document.getElementById('about-section').scrollIntoView({ behavior: 'smooth' })}>
             About Us
-          </button>
-          <button onClick={() => document.getElementById('contact-section').scrollIntoView({ behavior: 'smooth' })}>
-            Contact Details
           </button>
           <button onClick={() => document.getElementById('motive-section').scrollIntoView({ behavior: 'smooth' })}>
             Company Motive
@@ -185,10 +256,10 @@ const RecruiterProfile = () => {
         <div className="profile-grid">
           {/* LEFT COLUMN */}
           <div className="profile-left">
-            {/* Company Info Section */}
+            {/* Personal Info Section */}
             <div id="company-info-section" className="company-info-grid">
               <div className="company-info-header">
-                <h2 className="profile-heading">Company Information</h2>
+                <h2 className="profile-heading">Personal Information</h2>
                 {!editingSections.companyInfo ? (
                   <button className="section-edit-btn" onClick={() => handleSectionEdit('companyInfo')}>
                     EDIT
@@ -243,72 +314,39 @@ const RecruiterProfile = () => {
               </div>
               <div className="company-info">
                 <div className="input-group">
+                  <label>Recruiter Name</label>
+                  <input
+                    type="text"
+                    value={profileData.recruiterName || ''}
+                    onChange={(e) => handleInputChange('recruiterName', e.target.value)}
+                    disabled={!editingSections.companyInfo}
+                    className="profile-input"
+                    placeholder="Enter recruiter name"
+                  />
+                </div>
+                <div className="input-group">
                   <label>Company Name</label>
                   <input
                     type="text"
-                    value={profileData.companyName}
+                    value={profileData.companyName || ''}
                     onChange={(e) => handleInputChange('companyName', e.target.value)}
                     disabled={!editingSections.companyInfo}
                     className="profile-input"
                     placeholder="Enter company name"
                   />
                 </div>
-              </div>
-            </div>
-
-            {/* Employee Size Section */}
-            <div id="employee-size-section" className="employee-size-grid">
-              <div className="section-header">
-                <h2 className="profile-heading">Employee Size</h2>
-                {!editingSections.employeeSize ? (
-                  <button className="section-edit-btn" onClick={() => handleSectionEdit('employeeSize')}>
-                    EDIT
-                  </button>
-                ) : (
-                  <button className="section-save-btn" onClick={() => handleSectionSave('employeeSize')}>
-                    SAVE
-                  </button>
-                )}
-              </div>
-              <div className="input-group">
-                <label>Number of Employees</label>
-                <input
-                  type="number"
-                  value={profileData.employeeSize}
-                  onChange={(e) => handleInputChange('employeeSize', e.target.value)}
-                  disabled={!editingSections.employeeSize}
-                  className="profile-input"
-                  placeholder="e.g., 50"
-                />
-              </div>
-            </div>
-
-            {/* Contact Details Section */}
-            <div id="contact-section" className="contact-details-grid">
-              <div className="contact-details-header">
-                <h2 className="profile-heading">Contact Details</h2>
-                {!editingSections.contact ? (
-                  <button className="section-edit-btn" onClick={() => handleSectionEdit('contact')}>
-                    EDIT
-                  </button>
-                ) : (
-                  <button className="section-save-btn" onClick={() => handleSectionSave('contact')}>
-                    SAVE
-                  </button>
-                )}
-              </div>
-              <div className="contact-fields">
                 <div className="input-group">
                   <label>Official Email</label>
                   <input
                     type="email"
-                    value={profileData.contactEmail}
+                    value={profileData.contactEmail || ''}
                     onChange={(e) => handleInputChange('contactEmail', e.target.value)}
-                    disabled={!editingSections.contact}
+                    disabled={!editingSections.companyInfo}
                     className="profile-input"
                     placeholder="company@example.com"
                   />
                 </div>
+                
               </div>
             </div>
           </div>
@@ -331,7 +369,7 @@ const RecruiterProfile = () => {
               </div>
               <div className="input-group">
                 <textarea
-                  value={profileData.aboutUs}
+                  value={profileData.aboutUs || ''}
                   onChange={(e) => handleInputChange('aboutUs', e.target.value)}
                   disabled={!editingSections.about}
                   className="profile-textarea"
@@ -357,7 +395,7 @@ const RecruiterProfile = () => {
               </div>
               <div className="input-group">
                 <textarea
-                  value={profileData.companyMotive}
+                  value={profileData.companyMotive || ''}
                   onChange={(e) => handleInputChange('companyMotive', e.target.value)}
                   disabled={!editingSections.motive}
                   className="profile-textarea"
@@ -386,7 +424,7 @@ const RecruiterProfile = () => {
                   <label>LinkedIn</label>
                   <input
                     type="url"
-                    value={profileData.linkedin}
+                    value={profileData.linkedin || ''}
                     onChange={(e) => handleInputChange('linkedin', e.target.value)}
                     disabled={!editingSections.social}
                     className="profile-input"
@@ -397,7 +435,7 @@ const RecruiterProfile = () => {
                   <label>Instagram</label>
                   <input
                     type="url"
-                    value={profileData.instagram}
+                    value={profileData.instagram || ''}
                     onChange={(e) => handleInputChange('instagram', e.target.value)}
                     disabled={!editingSections.social}
                     className="profile-input"
