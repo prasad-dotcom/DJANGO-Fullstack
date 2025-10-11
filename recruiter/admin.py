@@ -11,7 +11,7 @@ class JobAdmin(admin.ModelAdmin):
 
 @admin.register(Recruiter_detail)
 class RecruiterDetailAdmin(admin.ModelAdmin):
-    list_display = ('user_id', 'user', 'name','email')
+    list_display = ('user_id', 'user', 'name')
 
     def user_id(self, obj):
         return obj.user_id

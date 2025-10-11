@@ -4,6 +4,15 @@ from django.db import models
 
 class Recruiter_detail(models.Model):
     user = models.OneToOneField('accounts.Users', on_delete=models.CASCADE, primary_key=True)
+    about_us = models.TextField(max_length=500, blank=True,null=True)
+    company_logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
+    company_name = models.CharField(max_length=255, blank=True,null=True)
+    contact_email = models.EmailField(max_length=255, blank=True,null=True)
+    company_motive = models.TextField(max_length=500, blank=True,null=True)
+    instagram = models.URLField(max_length=200, null=True, blank=True)
+    linkedin = models.URLField(max_length=200, null=True, blank=True)
+    
+    
 
     
     def __str__(self):

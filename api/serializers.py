@@ -131,9 +131,11 @@ class FreelancersSerializer(serializers.ModelSerializer):
 
    
 class RecruitersSerializer(serializers.ModelSerializer):
+    company_logo = serializers.ImageField(required=False, allow_null=True, use_url=True)
     class Meta:
         model = Recruiter_detail
         fields ='__all__'
+        read_only_fields =['user']
         
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input_type':'password'},write_only=True)

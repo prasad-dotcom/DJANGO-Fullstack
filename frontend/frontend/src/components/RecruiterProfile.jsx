@@ -1,17 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './RecruiterProfile.css';
 
 const PROFILE_API = 'http://127.0.0.1:8000/api/v1/accounts/recruiter_profile/';
-const RECRUITER_API_BASE = 'http://127.0.0.1:8000/api/v1/recruiters/';
+const API_BASE = 'http://127.0.0.1:8000/api/v1/recruiters/';
+
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('accessToken') || localStorage.getItem('access_token') || localStorage.getItem('token');
   return token ? { Authorization: `Bearer ${token}`, Accept: 'application/json' } : { Accept: 'application/json' };
 };
+const userId = localStorage.getItem('userId');
 
 const RecruiterProfile = () => {
   const navigate = useNavigate();
+  const hasFetchedRef = useRef(false);
   const [profileData, setProfileData] = useState({
     companyLogo: '',
     recruiterName: '',
@@ -35,6 +38,8 @@ const RecruiterProfile = () => {
 
   // Fetch profile data on mount
   useEffect(() => {
+    if (hasFetchedRef.current) return;
+    hasFetchedRef.current = true;
     const fetchProfile = async () => {
       const headers = getAuthHeaders();
       const res = await fetch(PROFILE_API, { method: 'GET', headers });
@@ -42,21 +47,21 @@ const RecruiterProfile = () => {
       const data = await res.json();
       const uid = data.user?.id || data.user?.user_id || localStorage.getItem('userId');
       setUserId(uid);
-      if (data.recruiter) {
-        setProfileData({
-          recruiterName: data.user?.name ?? '',
-          contactEmail: data.user?.email ?? '',
-          aboutUs: data.recruiter?.about_us ?? '',
-          companyLogo: data.recruiter?.company_logo ?? '',
-          companyName: data.recruiter?.company_name ?? '',
-          companyMotive: data.recruiter?.company_motive ?? '',
-          instagram: data.recruiter?.instagram ?? '',
-          linkedin: data.recruiter?.linkedin ?? ''
-        });
-      }
+      // Always set user fields
+      setProfileData(prev => ({
+        ...prev,
+        recruiterName: data.user?.name ?? '',
+        contactEmail: data.user?.email ?? '',
+        aboutUs: data.recruiter?.about_us ?? '',
+        companyLogo: data.recruiter?.company_logo ?? '',
+        companyName: data.recruiter?.company_name ?? '',
+        companyMotive: data.recruiter?.company_motive ?? '',
+        instagram: data.recruiter?.instagram ?? '',
+        linkedin: data.recruiter?.linkedin ?? ''
+      }));
     };
     fetchProfile();
-  }, []);
+  }, []); // Only runs once on mount
 
   // Controlled input handler
   const handleInputChange = (field, value) => {
@@ -82,6 +87,7 @@ const RecruiterProfile = () => {
     setShowSaveModal(true);
     setTimeout(() => setShowSaveModal(false), 2000);
 
+    const userId = localStorage.getItem('userId');
     if (!userId) {
       alert('User ID not found. Cannot save.');
       return;
@@ -97,22 +103,33 @@ const RecruiterProfile = () => {
       instagram: profileData.instagram,
       linkedin: profileData.linkedin
     };
-    const userId = localStorage.getItem('userId');
-    const url = `http://127.0.0.1:8000/api/v1/recruiters/${userId}/`;
 
-    // FIX: Assign fetch result to res
+    const url = `${API_BASE}${userId}/`;
+
+    const fd = new FormData();
+    if (selectedLogoFile instanceof File) {
+      fd.append('company_logo', selectedLogoFile);
+    }
+    fd.append('company_name', profileData.companyName);
+    fd.append('about_us', profileData.aboutUs);
+    fd.append('company_motive', profileData.companyMotive);
+    fd.append('contact_email', profileData.contactEmail);
+    fd.append('linkedin', profileData.linkedin);
+    fd.append('instagram', profileData.instagram);
+    fd.append('recruiter_name', profileData.recruiterName);
+
     const res = await fetch(url, {
       method: 'PATCH',
-      headers: { ...headers, 'Content-Type': 'application/json' },
-      body: JSON.stringify(bodyFields)
+      headers: getAuthHeaders(), // Do NOT set 'Content-Type'
+      body: fd
     });
 
     if (res.ok) {
       const updated = await res.json();
       setProfileData(prev => ({
         ...prev,
-        recruiterName: updated.user?.name ?? '',
-        contactEmail: updated.user?.email ?? '',
+        recruiterName: prev.recruiterName,  // User name doesn't change
+        contactEmail: prev.contactEmail,    // User email doesn't change
         companyLogo: updated.company_logo ?? prev.companyLogo,
         companyName: updated.company_name ?? prev.companyName,
         aboutUs: updated.about_us ?? prev.aboutUs,
@@ -273,16 +290,12 @@ const RecruiterProfile = () => {
               <div className="company-logo-section">
                 <div className="company-logo-container">
                   <div className="company-logo-placeholder">
-                    {profileData.companyLogo ? (
+                    {profileData.companyLogo && (
                       <img
                         src={profileData.companyLogo}
                         alt="Company Logo"
                         style={{ width: '90px', height: '90px', borderRadius: '50%' }}
                       />
-                    ) : (
-                      <div className="logo-upload-area">
-                        <div className="logo-icon">🏢</div>
-                      </div>
                     )}
                   </div>
                   <input
@@ -290,15 +303,9 @@ const RecruiterProfile = () => {
                     accept="image/*"
                     style={{ display: 'none' }}
                     id="company-logo-input"
-                    onChange={(e) => {
+                    onChange={e => {
                       const file = e.target.files[0];
-                      if (file) {
-                        const reader = new FileReader();
-                        reader.onload = (ev) => {
-                          handleInputChange('companyLogo', ev.target.result);
-                        };
-                        reader.readAsDataURL(file);
-                      }
+                      if (file) setSelectedLogoFile(file);
                     }}
                     disabled={!editingSections.companyInfo}
                   />

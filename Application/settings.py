@@ -92,8 +92,7 @@ WSGI_APPLICATION = 'Application.wsgi.application'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-print(os.path.join(MEDIA_ROOT, 'profile_photos', 'Passport_photo.JPG'))
-print(os.path.exists(os.path.join(MEDIA_ROOT, 'profile_photos', 'Passport_photo.JPG')))
+
 
 
 
