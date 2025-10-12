@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 # Create your models here.
 
@@ -27,18 +28,21 @@ class Recruiter_detail(models.Model):
         return self.user.email
     
 class Job(models.Model):
-    id = models.AutoField(primary_key=True)  # Django adds this by default
+    job_id = models.AutoField(primary_key=True)  # Django adds this by default
 
     recruiter = models.ForeignKey(Recruiter_detail, on_delete=models.CASCADE,related_name='jobs')
-    title = models.TextField(max_length=255)
-    description = models.TextField()
-    Responsibilities = models.TextField()
-    skills_required = models.TextField()
-    experience_required = models.CharField(max_length=100)
+    job_role = models.CharField(max_length=255,blank=False,null=False)
+    organization_name = models.CharField(max_length=255,blank=False,null=False)
+    location = models.CharField(max_length=255,blank=False,null=False)
+    job_type = models.CharField(max_length=100,blank=False,null=False)  
+    experience = models.CharField(max_length=100,blank=False,null=False)
+    skills_required= models.TextField(blank=False,null=False)
+    key_responsibilities = models.TextField(blank=False,null=False)
+    job_description = models.TextField(blank=False,null=False)
+    experience_required = models.CharField(max_length=100,blank=False,null=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+    updated_at = models.DateTimeField(auto_now=True)
     def __str__(self):
-        return self.title 
-    
-    
-    
+        return self.job_role
+
+

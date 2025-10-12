@@ -2,9 +2,17 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './PostJob.css';
 
+const API_URL = 'http://127.0.0.1:8000/api/v1/accounts/jobs/';
+
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('accessToken') || localStorage.getItem('access_token') || localStorage.getItem('token');
+  return token ? { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
+};
+
 const PostJob = () => {
   const navigate = useNavigate();
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [error, setError] = useState('');
 
   // Form state
   const [formData, setFormData] = useState({
@@ -39,36 +47,68 @@ const PostJob = () => {
       keyResponsibilities: '',
       jobDescription: ''
     });
+    setError('');
   };
 
   // Post job
-  const handlePost = (e) => {
+  const handlePost = async (e) => {
     e.preventDefault();
     
     // Validate required fields
     if (!formData.role || !formData.organizationName || !formData.location || 
         !formData.jobType || !formData.experience || !formData.skillsRequired || 
         !formData.keyResponsibilities || !formData.jobDescription) {
-      alert('Please fill in all fields!');
+      setError('Please fill in all fields!');
       return;
     }
 
-    // Log data to console
-    console.log('Job Posted:', formData);
+    // Prepare data for API (map form fields to model fields)
+    const jobData = {
+      job_role: formData.role,
+      organization_name: formData.organizationName,
+      location: formData.location,
+      job_type: formData.jobType,
+      experience: formData.experience,
+      skills_required: formData.skillsRequired,
+      key_responsibilities: formData.keyResponsibilities,
+      job_description: formData.jobDescription,
+      experience_required: formData.experience  // Set to same as experience
+    };
 
-    // Show success popup
-    setShowSuccessPopup(true);
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(jobData)
+      });
 
-    // Reset form after 2 seconds
-    setTimeout(() => {
-      handleReset();
-    }, 2000);
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Job posted successfully:', result);
+        
+        // Show success popup
+        setShowSuccessPopup(true);
+        setError('');
 
-    // Hide popup after 3 seconds and navigate back
-    setTimeout(() => {
-      setShowSuccessPopup(false);
-      navigate('/recruiter-dashboard');
-    }, 3000);
+        // Reset form after 2 seconds
+        setTimeout(() => {
+          handleReset();
+        }, 2000);
+
+        // Hide popup after 3 seconds and navigate back
+        setTimeout(() => {
+          setShowSuccessPopup(false);
+          navigate('/recruiter-dashboard');
+        }, 3000);
+      } else {
+        const errorData = await response.json();
+        console.error('Error posting job:', errorData);
+        setError('Failed to post job. Please try again.');
+      }
+    } catch (err) {
+      console.error('Network error:', err);
+      setError('Network error. Please check your connection.');
+    }
   };
 
   const handleBackToDashboard = () => {
@@ -84,6 +124,13 @@ const PostJob = () => {
             <div className="success-icon">✅</div>
             <h2 className="success-message">JOB POSTED SUCCESSFULLY !!!</h2>
           </div>
+        </div>
+      )}
+
+      {/* Error Message */}
+      {error && (
+        <div className="error-message">
+          {error}
         </div>
       )}
 

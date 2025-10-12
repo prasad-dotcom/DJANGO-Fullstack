@@ -27,6 +27,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.decorators import parser_classes, permission_classes
+from rest_framework.permissions import AllowAny
+
 import json
 
 
@@ -301,7 +303,7 @@ class SendPasswordResetEmailView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class PasswordResetView(APIView):
-
+    permission_classes = [AllowAny]  
     def post(self, request, uid, token, format=None):
         serializer = PasswordResetSerializer(data=request.data, context={'uid': uid, 'token': token})
         if serializer.is_valid(raise_exception=True):

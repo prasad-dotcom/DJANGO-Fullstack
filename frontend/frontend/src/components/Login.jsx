@@ -11,7 +11,7 @@ const Login = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [forgotPasswordData, setForgotPasswordData] = useState({
     email: '',
-    newPassword: ''
+
   });
 
   const handleForgotPasswordChange = (field, value) => {
@@ -23,24 +23,38 @@ const Login = () => {
   
   const handleOpenForgotPassword = () => {
     setShowForgotPasswordModal(true);
-    setForgotPasswordData({ email: '', newPassword: '' });
+    setForgotPasswordData({ email: '' });
   };
 
   const handleCloseForgotPassword = () => {
     setShowForgotPasswordModal(false);
-    setForgotPasswordData({ email: '', newPassword: '' });
+    setForgotPasswordData({ email: '' });
   };
   
-  const handleSubmitForgotPassword = () => {
-    if (forgotPasswordData.email && forgotPasswordData.newPassword) {
-      console.log('Password reset requested for:', forgotPasswordData.email);
-      setShowForgotPasswordModal(false);
-      setShowSuccessModal(true);
-      setTimeout(() => setShowSuccessModal(false), 2000);
-      setForgotPasswordData({ email: '', newPassword: '' });
-    } else {
-      alert('Please fill in all fields!');
+  const handleSubmitForgotPassword = async () => {
+    if (!forgotPasswordData.email) {
+      alert('Please enter your email!');
+      return;
     }
+    
+    try {
+      const res = await fetch('http://127.0.0.1:8000/api/v1/accounts/passwordreset/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: forgotPasswordData.email })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setShowForgotPasswordModal(false);
+        setShowSuccessModal(true);
+        setTimeout(() => setShowSuccessModal(false), 2000);
+      } else {
+        alert(data.error || 'Failed to send reset email');
+      }
+    } catch (err) {
+      alert('Network error');
+    }
+    setForgotPasswordData({ email: '' });
   };
 
   const handleChange = e => {
@@ -131,7 +145,7 @@ const Login = () => {
           <div className="success-modal">
             <div className="success-modal-content">
               <div className="success-modal-icon">✅</div>
-              <p className="success-modal-text">Password Changed Successfully!</p>
+              <p className="success-modal-text">Reset Email sent Successfully!</p>
             </div>
           </div>
         </div>
@@ -158,18 +172,9 @@ const Login = () => {
                   placeholder="Enter your registered email"
                 />
               </div>
-              <div className="form-group">
-                <label>Set New Password</label>
-                <input
-                  type="password"
-                  value={forgotPasswordData.newPassword}
-                  onChange={(e) => handleForgotPasswordChange('newPassword', e.target.value)}
-                  className="forgot-password-input"
-                  placeholder="Enter new password"
-                />
-              </div>
+              
               <button className="submit-forgot-btn" onClick={handleSubmitForgotPassword}>
-                Submit
+                Send Reset Link
               </button>
             </div>
           </div>
@@ -181,4 +186,3 @@ const Login = () => {
 };
 
 export default Login;
-

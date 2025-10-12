@@ -201,7 +201,7 @@ class SendPasswordResetEmailSerializer(serializers.ModelSerializer):
             print('Encoded UID', uid)
             token = PasswordResetTokenGenerator().make_token(user)
             print('Password Reset Token', token)
-            link = 'http://localhost:3000/api/accounts/reset/'+uid+'/'+token
+            link = 'http://localhost:3000/reset-password/'+uid+'/'+token
             print('Password Reset Link', link)
             #sending email
             body = 'Click Following Link to Reset Your Password \n ' + link
@@ -250,7 +250,8 @@ class JobSerializer(serializers.ModelSerializer):
     recruiter_id = serializers.IntegerField(source='recruiter.user_id', read_only=True)
     class Meta:
         model = Job
-        fields = ['title','description','Responsibilities','skills_required','experience_required','recruiter_id']
+        fields = '__all__'
+        read_only_fields = ['recruiter']
 
 
 
