@@ -5,13 +5,6 @@ import './RecruiterDashboard.css';
 const RecruiterDashboard = () => {
   const navigate = useNavigate();
   
-  const [formData, setFormData] = useState({
-    title: '',
-    requirements: '',
-    salary: '',
-    contactMail: ''
-  });
-
   const handleLogout = async () => {
     
     const accessToken = localStorage.getItem('accessToken');
@@ -37,6 +30,7 @@ const RecruiterDashboard = () => {
     }
   };
 
+
   const handleProfile = () => {
     console.log('Navigating to profile...');
     navigate('/recruiter-profile');
@@ -46,24 +40,9 @@ const RecruiterDashboard = () => {
     console.log(`Contacting ${freelancerName}`);
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handlePostProject = (e) => {
-    e.preventDefault();
-    console.log('Posting project:', formData);
-    // Reset form
-    setFormData({
-      title: '',
-      requirements: '',
-      salary: '',
-      contactMail: ''
-    });
+  const handlePostProject = () => {
+    console.log('Navigating to post project page...');
+    navigate('/post-project');
   };
 
   return (
@@ -74,6 +53,9 @@ const RecruiterDashboard = () => {
           <h1>Welcome! Recruiter</h1>
         </div>
         <div className="header-buttons">
+          <button className="header-btn" onClick={handlePostProject}>
+            Post
+          </button>
           <button className="header-btn" onClick={handleProfile}>
             Profile
           </button>
@@ -158,71 +140,12 @@ const RecruiterDashboard = () => {
           </div>
         </div>
 
-        {/* Post Projects Section (Bottom Full Width) */}
-        <div className="post-projects-section">
-          <h2 className="section-title">Post Projects</h2>
-          
-          <form className="post-project-form" onSubmit={handlePostProject}>
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="title">Title</label>
-                <input
-                  type="text"
-                  id="title"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                  placeholder="Enter project title"
-                  required
-                />
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="salary">Salary</label>
-                <input
-                  type="text"
-                  id="salary"
-                  name="salary"
-                  value={formData.salary}
-                  onChange={handleInputChange}
-                  placeholder="e.g., ₹5000"
-                  required
-                />
-              </div>
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="requirements">Requirements</label>
-              <textarea
-                id="requirements"
-                name="requirements"
-                value={formData.requirements}
-                onChange={handleInputChange}
-                placeholder="Describe project requirements..."
-                rows="4"
-                required
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="contactMail">Contact Mail</label>
-              <input
-                type="email"
-                id="contactMail"
-                name="contactMail"
-                value={formData.contactMail}
-                onChange={handleInputChange}
-                placeholder="your.email@example.com"
-                required
-              />
-            </div>
-            
-            <div className="form-submit">
-              <button type="submit" className="post-btn">
-                Post
-              </button>
-            </div>
-          </form>
+        {/* Post A Project Section (Compact) */}
+        <div className="post-project-compact-section">
+          <h2 className="post-project-title">POST A PROJECT !</h2>
+          <button className="glow-post-btn" onClick={handlePostProject}>
+            POST
+          </button>
         </div>
       </div>
     </div>

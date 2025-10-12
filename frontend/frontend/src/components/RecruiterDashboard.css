@@ -78,6 +78,7 @@
   transform: translateY(0);
 }
 
+
 /* Main Dashboard Content */
 .recruiter-content {
   position: relative;
@@ -113,10 +114,11 @@
   backdrop-filter: blur(20px);
   border: 2px solid rgba(236, 65, 134, 0.3);
   border-radius: 20px;
-  padding: 2rem;
+  padding: 2.5rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3),
               inset 0 1px 0 rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
+  min-height: 300px;
 }
 
 .analytics-section:hover {
@@ -128,14 +130,14 @@
 .analytics-grid {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 2rem;
 }
 
 .analytics-card {
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(236, 65, 134, 0.3);
   border-radius: 15px;
-  padding: 1.5rem;
+  padding: 2rem;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
@@ -167,13 +169,14 @@
 
 .analytics-label {
   color: rgba(255, 255, 255, 0.7);
-  font-size: 1rem;
-  margin-bottom: 0.75rem;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
 }
 
 .analytics-value {
   color: #FFFFFF;
-  font-size: 2rem;
+  font-size: 2.5rem;
   font-weight: 700;
   background: linear-gradient(90deg, #EC4186, #EE544A);
   -webkit-background-clip: text;
@@ -187,10 +190,11 @@
   backdrop-filter: blur(20px);
   border: 2px solid rgba(236, 65, 134, 0.3);
   border-radius: 20px;
-  padding: 2rem;
+  padding: 2.5rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3),
               inset 0 1px 0 rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
+  min-height: 300px;
 }
 
 .current-projects-section:hover {
@@ -202,18 +206,18 @@
 .current-projects-list {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .current-project-card {
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(236, 65, 134, 0.3);
   border-radius: 12px;
-  padding: 1.25rem;
+  padding: 1.75rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
@@ -254,35 +258,36 @@
 
 .project-field {
   display: flex;
-  gap: 0.75rem;
+  gap: 1rem;
   align-items: center;
 }
 
 .field-label {
   color: rgba(255, 255, 255, 0.6);
-  font-size: 0.9rem;
-  min-width: 80px;
+  font-size: 1rem;
+  min-width: 90px;
+  font-weight: 500;
 }
 
 .field-value {
   color: #FFFFFF;
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 500;
 }
 
 .pay-amount {
   color: #EC4186;
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
 }
 
 .contact-btn {
   background: linear-gradient(90deg, #EC4186, #EE544A);
   border: none;
   border-radius: 25px;
-  padding: 10px 25px;
+  padding: 12px 30px;
   color: #FFFFFF;
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -303,106 +308,223 @@
   transform: translateY(0);
 }
 
-/* Post Projects Section (Bottom Full Width) */
-.post-projects-section {
+/* Post A Project Compact Section */
+.post-project-compact-section {
   background: rgba(56, 18, 74, 0.4);
   backdrop-filter: blur(20px);
   border: 2px solid rgba(236, 65, 134, 0.3);
   border-radius: 20px;
-  padding: 2rem;
+  padding: 2.5rem 2rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3),
               inset 0 1px 0 rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
-}
-
-.post-projects-section:hover {
-  border-color: rgba(236, 65, 134, 0.5);
-  box-shadow: 0 15px 40px rgba(236, 65, 134, 0.2),
-              inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-/* Form Styles */
-.post-project-form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.form-group label {
-  color: #FFFFFF;
-  font-weight: 500;
-  font-size: 1rem;
-}
-
-.form-group input,
-.form-group textarea {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 10px;
-  padding: 12px 16px;
-  color: #FFFFFF;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  font-family: inherit;
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: #EC4186;
-  box-shadow: 0 0 15px rgba(236, 65, 134, 0.3);
-}
-
-.form-group input::placeholder,
-.form-group textarea::placeholder {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.form-group textarea {
-  resize: vertical;
-  min-height: 100px;
-}
-
-.form-submit {
-  display: flex;
+  align-items: center;
   justify-content: center;
-  margin-top: 1rem;
+  gap: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  animation: borderPulse 3s ease-in-out infinite;
 }
 
-.post-btn {
+/* Animated border pulse */
+@keyframes borderPulse {
+  0%, 100% {
+    border-color: rgba(236, 65, 134, 0.3);
+  }
+  50% {
+    border-color: rgba(236, 65, 134, 0.6);
+  }
+}
+
+/* Animated gradient background */
+.post-project-compact-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, 
+    rgba(236, 65, 134, 0.15) 0%, 
+    transparent 30%,
+    rgba(238, 84, 74, 0.15) 60%,
+    transparent 100%);
+  animation: rotateGradient 10s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes rotateGradient {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Floating particles */
+.post-project-compact-section::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-image: 
+    radial-gradient(circle, rgba(236, 65, 134, 0.6) 2px, transparent 2px),
+    radial-gradient(circle, rgba(238, 84, 74, 0.6) 1.5px, transparent 1.5px);
+  background-size: 120px 120px, 150px 150px;
+  background-position: 0 0, 40px 40px;
+  animation: particleFloat 25s linear infinite;
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+@keyframes particleFloat {
+  0% {
+    background-position: 0 0, 40px 40px;
+  }
+  100% {
+    background-position: 100px 100px, 140px 140px;
+  }
+}
+
+.post-project-compact-section:hover {
+  border-color: rgba(236, 65, 134, 0.8);
+  box-shadow: 0 15px 40px rgba(236, 65, 134, 0.4),
+              0 0 60px rgba(238, 84, 74, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  animation: borderPulse 1.5s ease-in-out infinite;
+}
+
+.post-project-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  text-align: center;
+  background: linear-gradient(90deg, #EC4186, #EE544A, #EC4186, #EE544A);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 2px;
+  margin: 0;
+  position: relative;
+  z-index: 10;
+  animation: gradientShift 3s ease-in-out infinite, textFloat 2s ease-in-out infinite;
+  text-shadow: 0 0 20px rgba(236, 65, 134, 0.5);
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes textFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.glow-post-btn {
   background: linear-gradient(90deg, #EC4186, #EE544A);
   border: none;
-  border-radius: 30px;
-  padding: 15px 50px;
+  border-radius: 35px;
+  padding: 18px 60px;
   color: #FFFFFF;
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: 1.3rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(236, 65, 134, 0.3);
+  transition: all 0.4s ease;
+  box-shadow: 0 4px 20px rgba(236, 65, 134, 0.4);
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 2px;
+  z-index: 10;
+  animation: buttonPulse 2s ease-in-out infinite;
 }
 
-.post-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(236, 65, 134, 0.6),
-              0 0 25px rgba(238, 84, 74, 0.5);
-  filter: brightness(1.15);
+@keyframes buttonPulse {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(236, 65, 134, 0.4);
+  }
+  50% {
+    box-shadow: 0 4px 30px rgba(236, 65, 134, 0.7),
+                0 0 30px rgba(238, 84, 74, 0.5);
+  }
 }
 
-.post-btn:active {
-  transform: translateY(0);
+.glow-post-btn::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -100%;
+  width: 50%;
+  height: 200%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.3), 
+    transparent);
+  transform: skewX(-20deg);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  50%, 100% {
+    left: 200%;
+  }
+}
+
+.glow-post-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+  z-index: -1;
+}
+
+.glow-post-btn:hover::after {
+  width: 300px;
+  height: 300px;
+}
+
+.glow-post-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 35px rgba(236, 65, 134, 0.7),
+              0 0 40px rgba(238, 84, 74, 0.6),
+              0 0 60px rgba(236, 65, 134, 0.4);
+  filter: brightness(1.2);
+  animation: buttonPulse 1s ease-in-out infinite;
+}
+
+.glow-post-btn:active {
+  transform: translateY(-1px) scale(1.03);
+}
+
+/* Ensure button text is visible */
+.glow-post-btn > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* Responsive Design */
@@ -420,8 +542,18 @@
     gap: 1.5rem;
   }
 
-  .form-row {
-    grid-template-columns: 1fr;
+  .post-project-compact-section {
+    max-width: 100%;
+    padding: 2rem 1.5rem;
+  }
+
+  .post-project-title {
+    font-size: 1.6rem;
+  }
+
+  .glow-post-btn {
+    padding: 16px 50px;
+    font-size: 1.2rem;
   }
 }
 
@@ -463,8 +595,13 @@
     width: 100%;
   }
 
-  .form-row {
-    grid-template-columns: 1fr;
+  .post-project-title {
+    font-size: 1.4rem;
+  }
+
+  .glow-post-btn {
+    padding: 15px 45px;
+    font-size: 1.1rem;
   }
 }
 
@@ -488,7 +625,7 @@
 
   .analytics-section,
   .current-projects-section,
-  .post-projects-section {
+  .post-project-compact-section {
     padding: 1.5rem;
   }
 
@@ -513,5 +650,16 @@
 
   .field-label {
     min-width: auto;
+  }
+
+  .post-project-title {
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+  }
+
+  .glow-post-btn {
+    padding: 14px 40px;
+    font-size: 1rem;
+    letter-spacing: 1px;
   }
 }

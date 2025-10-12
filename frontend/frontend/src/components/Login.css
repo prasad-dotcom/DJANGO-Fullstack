@@ -143,6 +143,195 @@
   color: #FFFFFF !important;
 }
 
+/* Forgot Password Link */
+.forgot-password-link {
+  color: #EC4186;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 0;
+}
+
+.forgot-password-link:hover {
+  color: #EE544A;
+  text-shadow: 0 0 10px rgba(236, 65, 134, 0.5);
+}
+
+/* Forgot Password Modal */
+.forgot-password-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  backdrop-filter: blur(5px);
+}
+
+.forgot-password-modal {
+  background: linear-gradient(135deg, #38124A, #1a0a24);
+  border: 2px solid #EC4186;
+  border-radius: 20px;
+  padding: 30px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 0 40px rgba(236, 65, 134, 0.6);
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.forgot-password-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid rgba(236, 65, 134, 0.3);
+}
+
+.forgot-password-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin: 0;
+}
+
+.close-forgot-btn {
+  background: none;
+  border: none;
+  color: #EC4186;
+  font-size: 36px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.close-forgot-btn:hover {
+  color: #EE544A;
+  transform: rotate(90deg);
+}
+
+.forgot-password-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.forgot-password-input {
+  width: 100%;
+  padding: 14px 18px;
+  font-size: 15px;
+  border: 2px solid rgba(236, 65, 134, 0.5);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.4);
+  color: #FFFFFF;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(236, 65, 134, 0.2);
+}
+
+.forgot-password-input:focus {
+  outline: none;
+  border-color: #EC4186;
+  box-shadow: 0 0 20px rgba(236, 65, 134, 0.5);
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.forgot-password-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.submit-forgot-btn {
+  padding: 14px 30px;
+  font-size: 16px;
+  font-weight: 600;
+  border: 2px solid #28a745;
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: #FFFFFF;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(40, 167, 69, 0.5);
+  font-family: 'Poppins', sans-serif;
+  margin-top: 10px;
+}
+
+.submit-forgot-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 25px rgba(40, 167, 69, 0.8);
+  background: linear-gradient(135deg, #20c997, #28a745);
+}
+
+/* Success Modal */
+.success-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10001;
+  pointer-events: none;
+}
+
+.success-modal {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #28a745, #20c997);
+  border: 2px solid #FFFFFF;
+  border-radius: 15px;
+  box-shadow: 0 8px 30px rgba(40, 167, 69, 0.6);
+  padding: 15px 30px;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    top: -100px;
+    opacity: 0;
+  }
+  to {
+    top: 20px;
+    opacity: 1;
+  }
+}
+
+.success-modal-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.success-modal-icon {
+  font-size: 28px;
+}
+
+.success-modal-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin: 0;
+}
+
 @media (max-width: 480px) {
   .login-page {
     padding: 1rem;
@@ -155,5 +344,21 @@
   .login-title {
     font-size: 2rem;
   }
-}
 
+  .forgot-password-modal {
+    width: 95%;
+    padding: 20px;
+  }
+
+  .forgot-password-header h2 {
+    font-size: 20px;
+  }
+
+  .success-modal {
+    width: 90%;
+  }
+
+  .success-modal-text {
+    font-size: 16px;
+  }
+}
