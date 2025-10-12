@@ -87,7 +87,6 @@ const RecruiterProfile = () => {
     setShowSaveModal(true);
     setTimeout(() => setShowSaveModal(false), 2000);
 
-    const userId = localStorage.getItem('userId');
     if (!userId) {
       alert('User ID not found. Cannot save.');
       return;
