@@ -1,3 +1,4 @@
+from os import link
 from rest_framework import serializers
 from Hello.models import Freelancer_detail
 from recruiter.models import Recruiter_detail
@@ -202,11 +203,11 @@ class SendPasswordResetEmailSerializer(serializers.ModelSerializer):
             token = PasswordResetTokenGenerator().make_token(user)
             print('Password Reset Token', token)
             link = 'http://localhost:3000/reset-password/'+uid+'/'+token
-            print('Password Reset Link', link)
+            
             #sending email
-            body = 'Click Following Link to Reset Your Password \n ' + link
+            body = f' Hi there,\n We received a request to reset the password associated with this email address.\n To complete the process and set a new password, please click the secure link below:\n {link}\n\nSecurity Note: If you did not request this password reset, please do not click the link. Your current password will remain active and secure..\n\nFor your security, this link will expire in 7 hours  and can only be used once.\n\nBest regards,\n\nTalentLoop Support'
             data = {
-                'subject': 'TALENT-LOOP | Reset Password Link',
+                'subject': 'Action Required: Reset Your Password for TALENT-LOOP',
                 'body': body,
                 'to_email': user.email
             }
