@@ -347,7 +347,13 @@ class JobListCreateView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self,request):
-        jobs = Job.objects.filter(created_at__isnull=False).all()
+    def get(self, request):
+        # Retrieve userID from the authenticated user (from JWT token)
+        user = request.user
+        if user.role == 'recruiter':
+            jobs = Job.objects.filter(recruiter__user=user, created_at__isnull=False)
+        else:
+            # For freelancers or others, return all jobs or handle differently
+            jobs = Job.objects.filter(created_at__isnull=False).all()
         serializer = JobSerializer(jobs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './JobSearch.css';
 
@@ -12,9 +12,53 @@ const JobSearch = () => {
     location: '',
     experience: ''
   });
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  // Function to get auth headers
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem('accessToken') || localStorage.getItem('access_token') || localStorage.getItem('token');
+    return token ? { Authorization: `Bearer ${token}`, Accept: 'application/json' } : { Accept: 'application/json' };
+  };
+
+  // Fetch jobs on component mount
+  useEffect(() => {
+    const fetchJobs = async () => {
+      const token = localStorage.getItem('accessToken') || localStorage.getItem('access_token') || localStorage.getItem('token');
+      if (!token) {
+        setError('No authentication token found. Please log in.');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/v1/accounts/jobs/', {
+          method: 'GET',
+          headers: getAuthHeaders()
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setJobs(data);
+        } else if (response.status === 401) {
+          localStorage.removeItem('token');
+          setError('Session expired. Please log in again.');
+          navigate('/login');
+        } else {
+          const errorData = await response.json().catch(() => ({}));
+          setError(`Failed to fetch jobs: ${response.status} - ${errorData.detail || 'Unknown error'}`);
+        }
+      } catch (err) {
+        setError('Network error: Check if the server is running.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchJobs();
+  }, [navigate]);
 
   const handleLogout = () => {
-    console.log('Logging out...');
+    localStorage.removeItem('token');
     navigate('/login');
   };
 
@@ -22,16 +66,21 @@ const JobSearch = () => {
     navigate('/freelancer-dashboard');
   };
 
-  const handleApply = (jobTitle) => {
-    console.log(`Applied for ${jobTitle}`);
+  const handleApply = (job) => {
+    navigate('/job-application', { 
+      state: { 
+        jobData: job 
+      } 
+    });
   };
 
   const handleSave = (jobTitle) => {
     console.log(`Saved ${jobTitle}`);
+    // TODO: Implement save to backend
   };
 
   const handleSelectAll = () => {
-    const allJobIds = jobs.map(job => job.id);
+    const allJobIds = jobs.map(job => job.job_id);
     setSelectedJobs(selectedJobs.length === allJobIds.length ? [] : allJobIds);
   };
 
@@ -50,59 +99,13 @@ const JobSearch = () => {
     }));
   };
 
-  // Static job data
-  const jobs = [
-    {
-      id: 1,
-      title: "Senior Software Development Engineer Test",
-      company: "Zodnik Solutions",
-      experience: "4-7 yrs",
-      location: "Hyderabad, India",
-      salary: "₹8-12 LPA",
-      postedDate: "Posted 16 days ago",
-      isEarlyApplicant: true
-    },
-    {
-      id: 2,
-      title: "Application Development Lead Analyst",
-      company: "Manipal Cigna Insurance Group",
-      experience: "5-8 yrs",
-      location: "Hyderabad",
-      salary: "₹10-15 LPA",
-      postedDate: "Posted a month ago",
-      isEarlyApplicant: true
-    },
-    {
-      id: 3,
-      title: "Full Stack Developer",
-      company: "TechCorp Solutions",
-      experience: "3-6 yrs",
-      location: "Bangalore, India",
-      salary: "₹6-10 LPA",
-      postedDate: "Posted 3 days ago",
-      isEarlyApplicant: false
-    },
-    {
-      id: 4,
-      title: "React Developer",
-      company: "Digital Innovations",
-      experience: "2-5 yrs",
-      location: "Mumbai, India",
-      salary: "₹5-8 LPA",
-      postedDate: "Posted 1 week ago",
-      isEarlyApplicant: true
-    },
-    {
-      id: 5,
-      title: "Python Developer",
-      company: "DataTech Labs",
-      experience: "3-7 yrs",
-      location: "Chennai, India",
-      salary: "₹7-12 LPA",
-      postedDate: "Posted 5 days ago",
-      isEarlyApplicant: false
-    }
-  ];
+  if (loading) {
+    return <div className="loading">Loading jobs...</div>;
+  }
+
+  if (error) {
+    return <div className="error">{error}</div>;
+  }
 
   return (
     <div className="job-search-page">
@@ -236,23 +239,27 @@ const JobSearch = () => {
               
               <div className="jobs-grid">
                 {jobs.map(job => (
-                  <div key={job.id} className="job-card">
+                  <div key={job.job_id} className="job-card">
                     <div className="job-card-content">
                       <div className="job-main-info">
-                        <h3 className="job-title">{job.title}</h3>
+                        <h3 className="job-title">{job.job_role}</h3>
                         <div className="job-company">
-                          <span className="company-name">{job.company}</span>
+                          <span className="company-name">{job.organization_name}</span>
                           <div className="company-logo">🏢</div>
                         </div>
                         
                         <div className="job-details">
                           <div className="job-detail-item">
                             <span className="detail-icon">💼</span>
-                            <span className="detail-text">{job.experience}</span>
+                            <span className="detail-text">{job.experience_required}</span>
                           </div>
                           <div className="job-detail-item">
                             <span className="detail-icon">📍</span>
                             <span className="detail-text">{job.location}</span>
+                          </div>
+                          <div className="job-detail-item">
+                            <span className="detail-icon">🏷️</span>
+                            <span className="detail-text">{job.job_type}</span>
                           </div>
                         </div>
 
@@ -261,20 +268,20 @@ const JobSearch = () => {
                           <span className="status-text">Early Applicant</span>
                         </div>
 
-                        <div className="job-posted">{job.postedDate}</div>
+                        <div className="job-posted"><p>Posted on: {new Date(job.created_at).toLocaleDateString()}</p></div>
                       </div>
 
                       <div className="job-actions">
                         <button 
                           className="save-btn"
-                          onClick={() => handleSave(job.title)}
+                          onClick={() => handleSave(job.job_role)}
                         >
                           <span className="btn-icon">🔖</span>
                           Save
                         </button>
                         <button 
                           className="apply-btn"
-                          onClick={() => handleApply(job.title)}
+                          onClick={() => handleApply(job)}
                         >
                           <span className="btn-icon">⚡</span>
                           Quick Apply

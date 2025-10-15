@@ -2,8 +2,8 @@
   "name": "freelanceconnect-frontend",
   "version": "0.1.0",
   "private": true,
-  
   "dependencies": {
+    "jwt-decode": "^4.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.0",
@@ -33,5 +33,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy" : "http://127.0.0.1:8000"
+  "proxy": "http://127.0.0.1:8000"
 }
