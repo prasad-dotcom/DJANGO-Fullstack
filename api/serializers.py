@@ -262,5 +262,7 @@ class JobDetailSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
 
+        
+
 
 

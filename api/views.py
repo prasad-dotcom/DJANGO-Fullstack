@@ -29,6 +29,8 @@ from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.decorators import parser_classes, permission_classes
 from rest_framework.permissions import AllowAny
+from rest_framework import generics
+
 
 import json
 
@@ -370,3 +372,4 @@ class JobDetailView(APIView):
             return Response({'error': 'Job not found.'}, status=status.HTTP_404_NOT_FOUND)
         serializer = JobDetailSerializer(job)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    

@@ -24,43 +24,55 @@ const JobSearch = () => {
     return token ? { Authorization: `Bearer ${token}`, Accept: 'application/json' } : { Accept: 'application/json' };
   };
 
+  // Separate function for fetching jobs data
+  const fetchJobsData = async () => {
+    const token = localStorage.getItem('accessToken') || localStorage.getItem('access_token') || localStorage.getItem('token');
+    if (!token) {
+      setError('No authentication token found. Please log in.');
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      console.log('Starting job fetch...');
+      const response = await fetch('http://127.0.0.1:8000/api/v1/accounts/jobs/', {
+        method: 'GET',
+        headers: getAuthHeaders()
+      });
+      console.log('Fetch response status:', response.status);
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Fetched jobs data:', data);
+        setJobs(data);
+      } else if (response.status === 401) {
+        console.log('Unauthorized: Removing token and redirecting to login');
+        localStorage.removeItem('token');
+        setError('Session expired. Please log in again.');
+        navigate('/login');
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        console.log('Fetch error data:', errorData);
+        setError(`Failed to fetch jobs: ${response.status} - ${errorData.detail || 'Unknown error'}`);
+      }
+    } catch (err) {
+      console.error('Network error during fetch:', err);
+      setError('Network error: Check if the server is running.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Fetch jobs on component mount
   useEffect(() => {
-    const fetchJobs = async () => {
-      const token = localStorage.getItem('accessToken') || localStorage.getItem('access_token') || localStorage.getItem('token');
-      if (!token) {
-        setError('No authentication token found. Please log in.');
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const response = await fetch('http://127.0.0.1:8000/api/v1/accounts/jobs/', {
-          method: 'GET',
-          headers: getAuthHeaders()
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setJobs(data);
-        } else if (response.status === 401) {
-          localStorage.removeItem('token');
-          setError('Session expired. Please log in again.');
-          navigate('/login');
-        } else {
-          const errorData = await response.json().catch(() => ({}));
-          setError(`Failed to fetch jobs: ${response.status} - ${errorData.detail || 'Unknown error'}`);
-        }
-      } catch (err) {
-        setError('Network error: Check if the server is running.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchJobs();
+    fetchJobsData();
   }, [navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    console.log('Logging out...');
     navigate('/login');
   };
 
@@ -69,6 +81,7 @@ const JobSearch = () => {
   };
 
   const handleApply = (job) => {
+    console.log(`Navigating to apply for ${job.job_role}`);
     navigate('/job-application', { 
       state: { 
         jobData: job
@@ -98,16 +111,16 @@ const JobSearch = () => {
   }, []);
 
   const handleSave = (job) => {
-    const isJobSaved = savedJobs.some(savedJob => savedJob.id === job.id);
+    const isJobSaved = savedJobs.some(savedJob => savedJob.job_id === job.job_id);
     
     if (isJobSaved) {
       // Remove from saved jobs
-      setSavedJobs(prev => prev.filter(savedJob => savedJob.id !== job.id));
-      console.log(`Removed ${job.title} from saved jobs`);
+      setSavedJobs(prev => prev.filter(savedJob => savedJob.job_id !== job.job_id));
+      console.log(`Removed ${job.job_role} from saved jobs`);
     } else {
       // Add to saved jobs
       setSavedJobs(prev => [...prev, job]);
-      console.log(`Added ${job.title} to saved jobs`);
+      console.log(`Added ${job.job_role} to saved jobs`);
     }
   };
 
@@ -255,7 +268,7 @@ const JobSearch = () => {
           {/* Job Listings */}
           <div className="job-listings">
             <div className="job-listings-header">
-             <span className="job-count">
+              <span className="job-count">
                 Showing {
                   selectedTab === 'saved' ? savedJobs.length : 
                   selectedTab === 'applied' ? appliedJobs.length : 
@@ -276,7 +289,7 @@ const JobSearch = () => {
 
             <div className="jobs-section">
               <h2 className="section-heading">
-                 {selectedTab === 'saved' ? 'Your Saved Jobs' : 
+                {selectedTab === 'saved' ? 'Your Saved Jobs' : 
                  selectedTab === 'applied' ? 'Your Applied Jobs' : 
                  'Jobs based on preferences'}
               </h2>
@@ -285,48 +298,47 @@ const JobSearch = () => {
                 {(selectedTab === 'saved' ? savedJobs : 
                   selectedTab === 'applied' ? appliedJobs : 
                   jobs).map(job => {
-                  const isJobSaved = savedJobs.some(savedJob => savedJob.id === job.id);
-                  const isJobApplied = appliedJobs.some(appliedJob => appliedJob.id === job.id);
+                  const isJobSaved = savedJobs.some(savedJob => savedJob.job_id === job.job_id);
+                  const isJobApplied = appliedJobs.some(appliedJob => appliedJob.job_id === job.job_id);
                   
                   return (
-                    <div key={job.id} className="job-card">
+                    <div key={job.job_id} className="job-card">
                       <div className="job-card-content">
                         <div className="job-main-info">
-                          <h3 className="job-title">{job.title}</h3>
+                          <h3 className="job-title">{job.job_role}</h3>
                           <div className="job-company">
-                            <span className="company-name">{job.company}</span>
+                            <span className="company-name">{job.organization_name}</span>
                             <div className="company-logo">🏢</div>
                           </div>
-                           <div className="job-details">
+                          
+                          <div className="job-details">
                             <div className="job-detail-item">
                               <span className="detail-icon">💼</span>
-                              <span className="detail-text">{job.experience}</span>
+                              <span className="detail-text">{job.experience_required}</span>
                             </div>
                             <div className="job-detail-item">
                               <span className="detail-icon">📍</span>
                               <span className="detail-text">{job.location}</span>
                             </div>
-                          
+                            <div className="job-detail-item">
+                              <span className="detail-icon">🏷️</span>
+                              <span className="detail-text">{job.job_type}</span>
+                            </div>
+                          </div>
+
                           <div className="job-status">
                             <span className="status-icon">🕐</span>
                             <span className="status-text">
                               {selectedTab === 'applied' ? job.status || 'Applied' : 'Early Applicant'}
                             </span>
                           </div>
-                          
+
+                          <div className="job-posted">
+                            <p>Posted on: {new Date(job.created_at).toLocaleDateString()}</p>
+                          </div>
                         </div>
 
-
-
-                        <div className="job-status">
-                          <span className="status-icon">🕐</span>
-                          <span className="status-text">Early Applicant</span>
-                        </div>
-
-                        <div className="job-posted"><p>Posted on: {new Date(job.created_at).toLocaleDateString()}</p></div>
-                      </div>
-
-                      <div className="job-actions">
+                        <div className="job-actions">
                           {selectedTab !== 'applied' && (
                             <button 
                               className={`save-btn ${isJobSaved ? 'saved' : ''}`}

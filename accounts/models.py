@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 
+from recruiter.models import Job
+
 #creating userManager as it is also a required object in Users(abstactbaseuser)class
 class MyUserManager(BaseUserManager):
     def create_user(self, email, name, tc, role=None, password=None, password2=None):
@@ -93,3 +95,7 @@ class LoginAttempt(models.Model):
     
     def __str__(self):
         return f"LoginAttempt(email={self.email}, success={self.success}, timestamp={self.timestamp})"
+    
+    
+    
+
