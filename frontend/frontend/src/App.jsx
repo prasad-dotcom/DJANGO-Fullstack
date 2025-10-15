@@ -12,6 +12,7 @@ import Profile from './components/Profile';
 import FreelancerProfile from './components/FreelancerProfile';
 import RecruiterProfile from './components/RecruiterProfile';
 import PostJob from './components/PostJob';
+import JobSearch from './components/JobSearch';
 import './App.css';
 
 function App() {
@@ -77,6 +78,11 @@ function App() {
            {/* Post Job Page */}
           <Route path="/post-project" element={
             <PostJob />
+          } />
+
+          {/* Job Search Page */}
+          <Route path="/job-search" element={
+            <JobSearch />
           } />
 
 

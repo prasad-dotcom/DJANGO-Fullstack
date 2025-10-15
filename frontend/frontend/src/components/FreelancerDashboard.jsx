@@ -38,6 +38,11 @@ const FreelancerDashboard = () => {
     navigate('/freelancer-profile');
   };
 
+  const handleFindJob = () => {
+    console.log('Navigating to job search...');
+    navigate('/job-search');
+  };
+
   const handleApply = (projectName) => {
     console.log(`Applied for ${projectName}`);
   };
@@ -50,6 +55,10 @@ const FreelancerDashboard = () => {
           <h1>Welcome! Freelancer</h1>
         </div>
         <div className="header-buttons">
+
+          <button className="header-btn find-job-btn" onClick={handleFindJob}>
+            Find Job
+          </button>
           <button className="header-btn" onClick={handleProfile}>
             Profile
           </button>

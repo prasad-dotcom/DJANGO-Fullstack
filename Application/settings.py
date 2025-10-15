@@ -50,10 +50,19 @@ INSTALLED_APPS = [
     'sendgrid',
     'rest_framework_simplejwt.token_blacklist',
     'phonenumber_field',
+    #'channels',
     
     
     
 ]
+
+#ASGI_APPLICATION = "Application.asgi.application"
+
+#CHANNEL_LAYERS = {
+#   "default": {
+#        "BACKEND": "channels.layers.InMemoryChannelLayer"
+#    }
+#}
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",

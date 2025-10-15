@@ -30,6 +30,7 @@ urlpatterns = [
     path('Hello/', include('Hello.urls')),
     path('recruiter/', include('recruiter.urls')),
     path('accounts/', include('accounts.urls')),
+    #path('chat/', include('chat.urls')),
     
     
     #api endpoints

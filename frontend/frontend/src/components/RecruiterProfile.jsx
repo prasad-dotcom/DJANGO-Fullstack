@@ -163,15 +163,43 @@ const RecruiterProfile = () => {
     }));
   };
 
-  const handleSavePassword = () => {
-    if (passwordData.newPassword === passwordData.confirmPassword && passwordData.newPassword !== '') {
-      console.log('Password changed successfully');
-      setShowPasswordModal(false);
-      setShowPasswordSuccessModal(true);
-      setTimeout(() => setShowPasswordSuccessModal(false), 2000);
-      setPasswordData({ newPassword: '', confirmPassword: '' });
-    } else {
-      alert('Passwords do not match or are empty!');
+  const handleSavePassword = async () => {
+    // Frontend validation
+    if (!passwordData.newPassword || !passwordData.confirmPassword) {
+      alert('Please fill in all fields!');
+      return;
+    }
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      alert('New passwords do not match!');
+      return;
+    }
+    if (passwordData.newPassword.length < 8) {
+      alert('New password must be at least 8 characters!');
+      return;
+    }
+
+    try {
+      const headers = getAuthHeaders();
+      const res = await fetch('http://127.0.0.1:8000/api/v1/accounts/passwordchange/', {
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          password: passwordData.newPassword,
+          password2: passwordData.confirmPassword
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setShowPasswordModal(false);
+        setShowPasswordSuccessModal(true);
+        setTimeout(() => setShowPasswordSuccessModal(false), 2000);
+        setPasswordData({ newPassword: '', confirmPassword: '' });
+      } else {
+        alert(data.message || 'Failed to change password');
+      }
+    } catch (err) {
+      alert('Network error');
     }
   };
 
