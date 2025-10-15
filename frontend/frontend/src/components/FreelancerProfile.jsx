@@ -6,7 +6,6 @@ const PROFILE_API = 'http://127.0.0.1:8000/api/v1/accounts/profile/';
 const API_BASE = 'http://127.0.0.1:8000/api/v1/Freelancers/';
 
 
-// Function to get auth headers
 const getAuthHeaders = () => {
   const token = localStorage.getItem('accessToken') || localStorage.getItem('access_token') || localStorage.getItem('token');
   return token ? { Authorization: `Bearer ${token}`, Accept: 'application/json' } : { Accept: 'application/json' };

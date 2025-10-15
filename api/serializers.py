@@ -4,6 +4,7 @@ from Hello.models import Freelancer_detail
 from recruiter.models import Recruiter_detail
 from accounts.models import Users 
 from recruiter.models import Job
+
 #imports required for reset password via email
 from django.core.exceptions import ValidationError
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -253,6 +254,13 @@ class JobSerializer(serializers.ModelSerializer):
         model = Job
         fields = '__all__'
         read_only_fields = ['recruiter']
+        
+class JobDetailSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Job
+        fields = '__all__'
+        
 
 
 

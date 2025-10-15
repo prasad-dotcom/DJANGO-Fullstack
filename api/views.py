@@ -14,6 +14,7 @@ from . serializers import SendPasswordResetEmailSerializer
 from . serializers import PasswordResetSerializer
 from . serializers import LogoutSerializer
 from . serializers import JobSerializer
+from . serializers import JobDetailSerializer
 
 from rest_framework.response import Response #used for json format response for API
 from rest_framework import status,permissions #to return status.status=HttpErrors
@@ -356,4 +357,16 @@ class JobListCreateView(APIView):
             # For freelancers or others, return all jobs or handle differently
             jobs = Job.objects.filter(created_at__isnull=False).all()
         serializer = JobSerializer(jobs, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    
+class JobDetailView(APIView):
+    permission_classes = [AllowAny]
+    
+    def get(self, request, job_id):
+        try:
+            job =  Job.objects.get(job_id=job_id)
+        except Job.DoesNotExist:
+            return Response({'error': 'Job not found.'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = JobDetailSerializer(job)
         return Response(serializer.data, status=status.HTTP_200_OK)
