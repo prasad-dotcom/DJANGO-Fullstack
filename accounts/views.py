@@ -9,6 +9,7 @@ from django.shortcuts import redirect
 
 def RegistrationPage(request):
     return render(request,'accounts/register.html')
+#hello
 
 def LoginPage(request):
     return render(request,'accounts/login.html')
