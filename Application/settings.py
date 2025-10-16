@@ -50,10 +50,20 @@ INSTALLED_APPS = [
     'sendgrid',
     'django_extensions',
     'rest_framework_simplejwt.token_blacklist',
+    'phonenumber_field',
+    #'channels',
     
     
     
 ]
+
+#ASGI_APPLICATION = "Application.asgi.application"
+
+#CHANNEL_LAYERS = {
+#   "default": {
+#        "BACKEND": "channels.layers.InMemoryChannelLayer"
+#    }
+#}
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -74,7 +84,7 @@ ROOT_URLCONF = 'Application.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates' ],
+        'DIRS': [ ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -88,6 +98,12 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Application.wsgi.application'
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
 
 
 # Database
@@ -150,7 +166,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-STATICFILES_DIRS = [BASE_DIR / 'static']
+STATICFILES_DIRS = ['static']
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -176,7 +192,11 @@ DEFAULT_FROM_EMAIL = 'zimbeam2499@gmail.com'
 
 
 SIMPLE_JWT = {
+<<<<<<< HEAD
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+=======
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=50),
+>>>>>>> origin/main
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     
 
@@ -213,8 +233,13 @@ CORS_ALLOWED_ORIGINS = [
 
     "http://localhost:8080",
     "http://127.0.0.1:9000",
+<<<<<<< HEAD
     "http://localhost:3001",
     "http://127.0.0.1:3001",
+=======
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+>>>>>>> origin/main
 ]
 
 CORS_ALLOW_METHODS = (

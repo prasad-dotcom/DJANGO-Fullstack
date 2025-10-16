@@ -1,6 +1,7 @@
 from django.contrib import admin
-from accounts.models import LoginAttempt, Users
+from accounts.models import LoginAttempt, Users , Applied_Job , Saved_Job
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+
 
 # Register your models here.
 class UserModelAdmin(BaseUserAdmin):

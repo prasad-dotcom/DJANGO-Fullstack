@@ -15,6 +15,7 @@ from . serializers import SendPasswordResetEmailSerializer
 from . serializers import PasswordResetSerializer
 from . serializers import LogoutSerializer
 from . serializers import JobSerializer
+from . serializers import JobDetailSerializer
 
 from rest_framework.response import Response #used for json format response for API
 from rest_framework import status,permissions #to return status.status=HttpErrors
@@ -27,6 +28,13 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from rest_framework.decorators import parser_classes, permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework import generics
+
+
+import json
 
 
 # Create your views here.
@@ -37,6 +45,7 @@ def Freelancers(request):
     if request.method == 'GET':
         Freelancer = Freelancer_detail.objects.all()
         serializer = FreelancersSerializer(Freelancer, many=True)
+        
         return Response(serializer.data, status=status.HTTP_200_OK)
     elif request.method == 'POST':
         serializer = FreelancersSerializer(data=request.data)
@@ -46,32 +55,66 @@ def Freelancers(request):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
+<<<<<<< HEAD
 @api_view(['GET','PUT','PATCH','DELETE'])
 @permission_classes([IsAuthenticated])
 def freelancer_details(request, user_id):
+=======
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
+@parser_classes([MultiPartParser, FormParser, JSONParser])
+@permission_classes([IsAuthenticated])
+def freelancer_details(request, user_id):
+
+>>>>>>> origin/main
     try:
         freelancer = Freelancer_detail.objects.get(user_id=user_id)
     except Freelancer_detail.DoesNotExist:
         return Response({'error': 'Freelancer not found'}, status=status.HTTP_404_NOT_FOUND)
 
+<<<<<<< HEAD
     # owner check
     if request.user.id != freelancer.user.id and not request.user.is_staff:
         return Response({'detail': 'Forbidden'}, status=status.HTTP_403_FORBIDDEN)
 
+=======
+>>>>>>> origin/main
     if request.method == 'GET':
         serializer = FreelancersSerializer(freelancer)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+<<<<<<< HEAD
     if request.method in ('PUT', 'PATCH'):
         partial = True  # PATCH -> partial=True, PUT -> full by REST semantics (but you may allow partial=True for PUT too)
         serializer = FreelancersSerializer(freelancer, data=request.data, partial=partial)
+=======
+    elif request.method in ('PUT', 'PATCH'):
+        # copy so we can mutate (QueryDict from multipart)
+        data = request.data.copy()
+
+        # if languages sent as JSON string in FormData, parse it to list
+        if 'languages' in data and isinstance(data['languages'], str):
+            try:
+                data['languages'] = json.loads(data['languages'])
+            except Exception:
+                # leave as-is or convert to single-item list
+                data['languages'] = [data['languages']]
+
+        partial = (request.method == 'PATCH')
+        serializer = FreelancersSerializer(Freelancer, data=data, partial=partial)
+>>>>>>> origin/main
         if serializer.is_valid():
+            # ensure owner remains unchanged; serializer should have user as read_only
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+<<<<<<< HEAD
     if request.method == 'DELETE':
         freelancer.delete()
+=======
+    elif request.method == 'DELETE':
+        Freelancer.delete()
+>>>>>>> origin/main
         return Response(status=status.HTTP_204_NO_CONTENT)
     
 class Recruiters(APIView):
@@ -88,22 +131,42 @@ class Recruiters(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class recruiter_details(APIView):
+<<<<<<< HEAD
+=======
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+>>>>>>> origin/main
     permission_classes = [IsAuthenticated]
 
     def get_object(self, user_id):
         try:
             return Recruiter_detail.objects.get(user_id=user_id)
         except Recruiter_detail.DoesNotExist:
+<<<<<<< HEAD
             raise Http404
 
     def get(self, request, user_id):
         obj = self.get_object(user_id)
         if request.user.id != obj.user.id and not request.user.is_staff:
             return Response({'detail': 'Forbidden'}, status=status.HTTP_403_FORBIDDEN)
+=======
+            return None
+
+    def _is_owner_or_staff(self, request, user_id):
+        try:
+            return request.user.is_staff or request.user.id == int(user_id)
+        except Exception:
+            return False
+
+    def get(self, request, user_id):
+        obj = self.get_object(user_id)
+        if not obj:
+            return Response({'detail': 'Recruiter profile not found'}, status=status.HTTP_404_NOT_FOUND)
+>>>>>>> origin/main
         serializer = RecruitersSerializer(obj)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, user_id):
+<<<<<<< HEAD
         obj = self.get_object(user_id)
         if request.user.id != obj.user.id and not request.user.is_staff:
             return Response({'detail': 'Forbidden'}, status=status.HTTP_403_FORBIDDEN)
@@ -118,6 +181,68 @@ class recruiter_details(APIView):
         obj = self.get_object(user_id)
         if request.user.id != obj.user.id and not request.user.is_staff:
             return Response({'detail': 'Forbidden'}, status=status.HTTP_403_FORBIDDEN)
+=======
+        if not self._is_owner_or_staff(request, user_id):
+            return Response({'detail': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+
+        obj = self.get_object(user_id)
+        data = request.data.copy()
+
+        # If creating new, attach user instance on save (serializer likely has user as read_only)
+        if obj:
+            serializer = RecruitersSerializer(obj, data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # create
+        try:
+            user_obj = Users.objects.get(pk=user_id)
+        except Users.DoesNotExist:
+            return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = RecruitersSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save(user=user_obj)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request, user_id):
+        if not self._is_owner_or_staff(request, user_id):
+            return Response({'detail': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+
+        obj = self.get_object(user_id)
+        data = request.data.copy()
+
+        if obj:
+            serializer = RecruitersSerializer(obj, data=data,  partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # If no object, create partial (same as create)
+        try:
+            user_obj = Users.objects.get(pk=user_id)
+        except Users.DoesNotExist:
+            return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        recruiter = Recruiter_detail.objects.get(user_id=user_id)
+        serializer = RecruitersSerializer(obj,data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save(user=user_obj)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, user_id):
+        if not self._is_owner_or_staff(request, user_id):
+            return Response({'detail': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+
+        obj = self.get_object(user_id)
+        if not obj:
+            return Response({'detail': 'Recruiter profile not found'}, status=status.HTTP_404_NOT_FOUND)
+
+>>>>>>> origin/main
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
@@ -165,12 +290,21 @@ class UserLoginView(APIView):
                 token = get_tokens_for_user(user)
                 # Set redirect_url based on user role
                 if user.role == 'recruiter':
+<<<<<<< HEAD
                     redirect_url = 'http://localhost:3000/recruiter-dashboard'
                     
                 elif user.role == 'freelancer':
                     redirect_url = 'http://localhost:3000/freelancer-dashboard'
                 else:
                     redirect_url = 'http://localhost:3000/login'
+=======
+                    redirect_url = ('http://localhost:3000/recruiter-dashboard')
+                    
+                elif user.role == 'freelancer':
+                    redirect_url = ('http://localhost:3000/freelancer-dashboard')
+                else:
+                    redirect_url = ('http://localhost:3000/home')
+>>>>>>> origin/main
                 #print("User role:", user.role, "Redirect URL:", redirect_url)
                 return Response({
                     "token": token,
@@ -180,17 +314,43 @@ class UserLoginView(APIView):
                 
             else:
                 return Response({"error": {"detail": "Invalid email or password"}}, status=status.HTTP_401_UNAUTHORIZED)
-            
-
 
 class ProfileView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None):
         user = request.user
-        serializer = ProfileSerializer(instance=user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
+        user_serializer = ProfileSerializer(instance=user)
+
+        try:
+            freelancer = Freelancer_detail.objects.get(user=user)
+            freelancer_serializer = FreelancersSerializer(instance=freelancer)
+            payload = {
+                "user": user_serializer.data,
+                "freelancer": freelancer_serializer.data
+            }
+            return Response(payload, status=status.HTTP_200_OK)
+        except Freelancer_detail.DoesNotExist:
+            return Response({"user": user_serializer.data, "freelancer": None}, status=status.HTTP_200_OK)
+
+class RecruiterProfileView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None):
+        user = request.user
+        user_serializer = ProfileSerializer(instance=user)
+
+        try:
+            recruiter = Recruiter_detail.objects.get(user=user)
+            recruiter_serializer = RecruitersSerializer(instance=recruiter)
+            payload = {
+                "user": user_serializer.data,
+                "recruiter": recruiter_serializer.data
+            }
+            return Response(payload, status=status.HTTP_200_OK)
+        except Recruiter_detail.DoesNotExist:
+            return Response({"user": user_serializer.data, "recruiter": None}, status=status.HTTP_200_OK)       
+
     
 class ChangePasswordView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -211,7 +371,7 @@ class SendPasswordResetEmailView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class PasswordResetView(APIView):
-
+    permission_classes = [AllowAny]  
     def post(self, request, uid, token, format=None):
         serializer = PasswordResetSerializer(data=request.data, context={'uid': uid, 'token': token})
         if serializer.is_valid(raise_exception=True):
@@ -255,7 +415,29 @@ class JobListCreateView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self,request):
-        jobs = Job.objects.filter(created_at__isnull=False).all()
+    def get(self, request):
+        # Retrieve userID from the authenticated user (from JWT token)
+        user = request.user
+        if user.role == 'recruiter':
+            jobs = Job.objects.filter(recruiter__user=user, created_at__isnull=False)
+        else:
+            # For freelancers or others, return all jobs or handle differently
+            jobs = Job.objects.filter(created_at__isnull=False).all()
         serializer = JobSerializer(jobs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+<<<<<<< HEAD
+=======
+    
+    
+class JobDetailView(APIView):
+    permission_classes = [AllowAny]
+    
+    def get(self, request, job_id):
+        try:
+            job =  Job.objects.get(job_id=job_id)
+        except Job.DoesNotExist:
+            return Response({'error': 'Job not found.'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = JobDetailSerializer(job)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+>>>>>>> origin/main

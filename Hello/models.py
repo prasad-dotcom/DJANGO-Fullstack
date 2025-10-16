@@ -1,5 +1,6 @@
 from django.db import models
 from accounts.models import Users
+from phonenumber_field.modelfields import PhoneNumberField
 
 # Create your models here.
 
@@ -12,6 +13,7 @@ phone_validator = RegexValidator(
 
 class Freelancer_detail(models.Model):
     user = models.OneToOneField(Users, on_delete=models.CASCADE, primary_key=True)
+<<<<<<< HEAD
     mobile_No = models.CharField(max_length=15, validators=[phone_validator],null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
     ge = models.PositiveIntegerField(null=True, blank=True)
@@ -22,7 +24,20 @@ class Freelancer_detail(models.Model):
     hourly_rate = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     lambdainkedin_profile = models.URLField(max_length=200, null=True, blank=True)
     github_profile= models.URLField(max_length=200, null=True, blank=True)
+=======
+    profile_photo = models.ImageField(upload_to='profile_photos/', null=True, blank=True)
+    course = models.CharField(max_length=100, null=True, blank=True)
+    bio = models.TextField(null=True, blank=True)
+>>>>>>> origin/main
     skills = models.TextField(null=True, blank=True)
+    experience = models.TextField(null=True, blank=True)
+    linkedin = models.URLField(max_length=200, null=True, blank=True)
+    github = models.URLField(max_length=200, null=True, blank=True)
+    portfolio = models.URLField(max_length=200, null=True, blank=True)
+    languages = models.TextField(null=True, blank=True)
+    jobpreferences = models.TextField(null=True, blank=True)
+    resume = models.FileField(upload_to='resumes/',null=True, blank=True)
+    phone = PhoneNumberField(null=True, blank=True, unique=True)
 
     def __str__(self):
         return self.user.name
