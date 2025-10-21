@@ -2,7 +2,7 @@ from os import link
 from rest_framework import serializers
 from Hello.models import Freelancer_detail
 from recruiter.models import Recruiter_detail
-from accounts.models import Users 
+from accounts.models import Users , UserJobList
 from recruiter.models import Job
 
 #imports required for reset password via email
@@ -260,6 +260,13 @@ class JobDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
         fields = '__all__'
+        
+
+class UserJobListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserJobList
+        fields = ['user', 'saved_job_ids', 'applied_job_ids', 'updated_at']
+
         
 
         

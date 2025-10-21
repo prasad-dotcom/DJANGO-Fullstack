@@ -1,7 +1,7 @@
 #importing models from app
 from Hello.models import Freelancer_detail 
 from recruiter.models import Recruiter_detail 
-from accounts.models import Users, LoginAttempt
+from accounts.models import Users, LoginAttempt , UserJobList
 from recruiter.models import Job
 #importing serializers
 from . serializers import FreelancersSerializer
@@ -15,6 +15,7 @@ from . serializers import PasswordResetSerializer
 from . serializers import LogoutSerializer
 from . serializers import JobSerializer
 from . serializers import JobDetailSerializer
+from . serializers import UserJobListSerializer
 
 from rest_framework.response import Response #used for json format response for API
 from rest_framework import status,permissions #to return status.status=HttpErrors
@@ -373,3 +374,43 @@ class JobDetailView(APIView):
         serializer = JobDetailSerializer(job)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+@api_view(['GET','POST'])
+@permission_classes([IsAuthenticated])
+def user_job_lists(request):
+    user = request.user
+    user_job_list, created = UserJobList.objects.get_or_create(user=user)
+
+    if request.method == 'GET':
+        # Fetch full job details for saved and applied jobs
+        saved_jobs = Job.objects.filter(job_id__in=user_job_list.saved_job_ids)
+        applied_jobs = Job.objects.filter(job_id__in=user_job_list.applied_job_ids)
+        
+        saved_data = JobSerializer(saved_jobs, many=True).data
+        applied_data = JobSerializer(applied_jobs, many=True).data
+        
+        return Response({
+            'saved_jobs': saved_data,
+            'applied_jobs': applied_data
+        })
+    
+    elif request.method == 'POST':
+        action = request.data.get('action')  # 'save', 'unsave', 'apply'
+        job_id = request.data.get('job_id')
+        
+        if not job_id or not action:
+            return Response({'error': 'job_id and action required'}, status=400)
+        
+        if action == 'save':
+            if job_id not in user_job_list.saved_job_ids:
+                user_job_list.saved_job_ids.append(job_id)
+        elif action == 'unsave':
+            if job_id in user_job_list.saved_job_ids:
+                user_job_list.saved_job_ids.remove(job_id)
+        elif action == 'apply':
+            if job_id not in user_job_list.applied_job_ids:
+                user_job_list.applied_job_ids.append(job_id)
+        else:
+            return Response({'error': 'Invalid action'}, status=400)
+        
+        user_job_list.save()
+        return Response({'message': f'Job {action}d successfully'})

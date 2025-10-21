@@ -3,6 +3,7 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 
 from recruiter.models import Job
 
+
 #creating userManager as it is also a required object in Users(abstactbaseuser)class
 class MyUserManager(BaseUserManager):
     def create_user(self, email, name, tc, role=None, password=None, password2=None):
@@ -95,6 +96,16 @@ class LoginAttempt(models.Model):
     
     def __str__(self):
         return f"LoginAttempt(email={self.email}, success={self.success}, timestamp={self.timestamp})"
+
+
+class UserJobList(models.Model):
+    user = models.OneToOneField(Users, on_delete=models.CASCADE)
+    saved_job_ids = models.JSONField(default=list) 
+    applied_job_ids = models.JSONField(default=list)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"{self.user.name}'s job lists"
     
     
     

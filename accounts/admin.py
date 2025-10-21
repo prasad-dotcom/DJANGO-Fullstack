@@ -1,5 +1,5 @@
 from django.contrib import admin
-from accounts.models import LoginAttempt, Users , Applied_Job , Saved_Job
+from accounts.models import LoginAttempt, Users, UserJobList
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 
@@ -37,6 +37,13 @@ class LoginAttemptAdmin(admin.ModelAdmin):
     list_display = ('email', 'timestamp', 'success', 'ip_address', 'user_agent')
     list_filter = ('success', 'timestamp', 'email')
     search_fields = ('email', 'ip_address', 'user_agent')
+
+
+@admin.register(UserJobList)
+class UserJobListAdmin(admin.ModelAdmin):
+    list_display = ('id','user', 'saved_job_ids','applied_job_ids',  'updated_at')         
+    search_fields = ('user', 'name')
+    readonly_fields = ('updated_at',)
 
 
 # Now register the new UserAdmin...

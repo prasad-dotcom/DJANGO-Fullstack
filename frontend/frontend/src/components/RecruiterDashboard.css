@@ -5,6 +5,10 @@
   padding: 0;
   position: relative;
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center content horizontally */
+  padding: 20px;
 }
 
 /* Decorative Background Effect */
@@ -30,12 +34,14 @@
   position: relative;
   z-index: 10;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* Space between welcome text and buttons */
   align-items: center;
   padding: 1.5rem 3rem;
   background: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(236, 65, 134, 0.2);
+  width: 100%;
+  max-width: 1200px;
 }
 
 .welcome-text h1 {
@@ -51,7 +57,7 @@
 
 .header-buttons {
   display: flex;
-  gap: 1rem;
+  gap: 10px; /* Space between buttons */
 }
 
 .header-btn {
@@ -90,10 +96,12 @@
 
 /* Top Section Container */
 .recruiter-top-section {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between; /* Analytics left, projects right */
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin-bottom: 20px;
 }
 
 /* Section Title */
@@ -119,6 +127,7 @@
               inset 0 1px 0 rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
   min-height: 300px;
+  flex: 1; /* Equal width */
 }
 
 .analytics-section:hover {
@@ -128,12 +137,16 @@
 }
 
 .analytics-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two columns */
+  gap: 15px;
 }
 
 .analytics-card {
+  text-align: center; /* Center text */
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(236, 65, 134, 0.3);
   border-radius: 15px;
@@ -195,6 +208,7 @@
               inset 0 1px 0 rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
   min-height: 300px;
+  flex: 1; /* Equal width */
 }
 
 .current-projects-section:hover {
@@ -203,13 +217,52 @@
               inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
+.current-projects-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.view-all-btn {
+  background: transparent;
+  border: 2px solid rgba(236, 65, 134, 0.5);
+  border-radius: 20px;
+  padding: 8px 20px;
+  color: #FFFFFF;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.view-all-btn:hover {
+  border-color: #EC4186;
+  background: rgba(236, 65, 134, 0.1);
+  box-shadow: 0 0 15px rgba(236, 65, 134, 0.4);
+  transform: translateY(-2px);
+}
+
+.view-all-btn:active {
+  transform: translateY(0);
+}
+
 .current-projects-list {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 10px; /* Space between cards */
 }
 
 .current-project-card {
+  display: flex;
+  justify-content: space-between; /* Details left, button right */
+  align-items: center;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(236, 65, 134, 0.3);
   border-radius: 12px;
@@ -250,7 +303,7 @@
 .project-details {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 5px; /* Space between fields */
   flex: 1;
   position: relative;
   z-index: 1;
@@ -258,11 +311,13 @@
 
 .project-field {
   display: flex;
-  gap: 1rem;
-  align-items: center;
+  align-items: center; /* Align label and value */
+  gap: 10px;
 }
 
 .field-label {
+  font-weight: bold;
+  min-width: 100px; /* Consistent label width */
   color: rgba(255, 255, 255, 0.6);
   font-size: 1rem;
   min-width: 90px;
@@ -270,6 +325,7 @@
 }
 
 .field-value {
+  flex: 1;
   color: #FFFFFF;
   font-size: 1.1rem;
   font-weight: 500;
@@ -328,6 +384,8 @@
   position: relative;
   overflow: hidden;
   animation: borderPulse 3s ease-in-out infinite;
+  text-align: center; /* Center title and button */
+  margin-top: 20px;
 }
 
 /* Animated border pulse */
@@ -453,6 +511,7 @@
   letter-spacing: 2px;
   z-index: 10;
   animation: buttonPulse 2s ease-in-out infinite;
+  margin-top: 10px;
 }
 
 @keyframes buttonPulse {

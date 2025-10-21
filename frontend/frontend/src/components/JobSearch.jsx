@@ -17,11 +17,17 @@ const JobSearch = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  // Add state for user jobs
+  const [userJobs, setUserJobs] = useState({ saved_jobs: [], applied_jobs: [] });
 
   // Function to get auth headers
   const getAuthHeaders = () => {
     const token = localStorage.getItem('accessToken') || localStorage.getItem('access_token') || localStorage.getItem('token');
-    return token ? { Authorization: `Bearer ${token}`, Accept: 'application/json' } : { Accept: 'application/json' };
+    return {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
   };
 
   // Separate function for fetching jobs data
@@ -42,12 +48,9 @@ const JobSearch = () => {
         method: 'GET',
         headers: getAuthHeaders()
       });
-      console.log('Fetch response status:', response.status);
-
       if (response.ok) {
         const data = await response.json();
-        console.log('Fetched jobs data:', data);
-        setJobs(data);
+        setJobs(data);  // Populates jobs for recommended tab
       } else if (response.status === 401) {
         console.log('Unauthorized: Removing token and redirecting to login');
         localStorage.removeItem('token');
@@ -71,6 +74,31 @@ const JobSearch = () => {
     fetchJobsData();
   }, [navigate]);
 
+  // Fetch user jobs on mount (replace existing useEffect for applied jobs)
+  useEffect(() => {
+    const fetchUserJobs = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/v1/accounts/user_job_list/', {
+          headers: getAuthHeaders(),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setUserJobs(data);
+          setSavedJobs(data.saved_jobs);
+          setAppliedJobs(data.applied_jobs);
+        } else if (response.status === 401) {
+          setError('Session expired. Please log in.');
+          navigate('/login');
+        } else {
+          setError('Failed to fetch user jobs.');
+        }
+      } catch (err) {
+        setError('Network error fetching user jobs.');
+      }
+    };
+    fetchUserJobs();
+  }, [navigate]);
+
   const handleLogout = () => {
     console.log('Logging out...');
     navigate('/login');
@@ -80,47 +108,45 @@ const JobSearch = () => {
     navigate('/freelancer-dashboard');
   };
 
-  const handleApply = (job) => {
-    console.log(`Navigating to apply for ${job.job_role}`);
-    navigate('/job-application', { 
-      state: { 
-        jobData: job
-      } 
-    });
+  const handleApply = async (job) => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/v1/accounts/user_job_list/', {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ job_id: job.job_id, action: 'apply' }),
+      });
+      if (response.ok) {
+        setAppliedJobs(prev => [...prev, job]);
+        navigate('/job-application', { state: { jobData: job } });
+      } else {
+        setError('Failed to apply for job.');
+      }
+    } catch (err) {
+      setError('Network error during apply.');
+    }
   };
 
-  // Load applied jobs from localStorage on component mount
-  useEffect(() => {
-    const savedAppliedJobs = localStorage.getItem('appliedJobs');
-    if (savedAppliedJobs) {
-      setAppliedJobs(JSON.parse(savedAppliedJobs));
-    }
-  }, []);
-
-  // Check for new applied jobs when window gains focus (returning from job application)
-  useEffect(() => {
-    const handleFocus = () => {
-      const savedAppliedJobs = localStorage.getItem('appliedJobs');
-      if (savedAppliedJobs) {
-        setAppliedJobs(JSON.parse(savedAppliedJobs));
-      }
-    };
-
-    window.addEventListener('focus', handleFocus);
-    return () => window.removeEventListener('focus', handleFocus);
-  }, []);
-
-  const handleSave = (job) => {
+  // Update handleSave to send to backend
+  const handleSave = async (job) => {
     const isJobSaved = savedJobs.some(savedJob => savedJob.job_id === job.job_id);
-    
-    if (isJobSaved) {
-      // Remove from saved jobs
-      setSavedJobs(prev => prev.filter(savedJob => savedJob.job_id !== job.job_id));
-      console.log(`Removed ${job.job_role} from saved jobs`);
-    } else {
-      // Add to saved jobs
-      setSavedJobs(prev => [...prev, job]);
-      console.log(`Added ${job.job_role} to saved jobs`);
+    const action = isJobSaved ? 'unsave' : 'save';
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/v1/accounts/user_job_list/', {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ job_id: job.job_id, action }),
+      });
+      if (response.ok) {
+        setSavedJobs(prev =>
+          isJobSaved
+            ? prev.filter(savedJob => savedJob.job_id !== job.job_id)
+            : [...prev, job]
+        );
+      } else {
+        setError('Failed to save/unsave job.');
+      }
+    } catch (err) {
+      setError('Network error during save.');
     }
   };
 
@@ -305,10 +331,12 @@ const JobSearch = () => {
                     <div key={job.job_id} className="job-card">
                       <div className="job-card-content">
                         <div className="job-main-info">
+                          
                           <h3 className="job-title">{job.job_role}</h3>
                           <div className="job-company">
-                            <span className="company-name">{job.organization_name}</span>
+                            
                             <div className="company-logo">🏢</div>
+                            <span className="company-name">{job.organization_name}</span>
                           </div>
                           
                           <div className="job-details">
